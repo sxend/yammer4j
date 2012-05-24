@@ -1,4 +1,4 @@
-package yammer4j.exception.runtime;
+package yammer4j.exception;
 
 public class YammerException extends Exception {
 
