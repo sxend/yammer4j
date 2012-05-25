@@ -1,4 +1,6 @@
 *.project
 *.classpath
-*.settings/
-*target/
+*.settings/*
+*target/*
+*src/main/java/test
+*src/main/java/test/*
