@@ -1,26 +1,19 @@
 package yammer4j;
 
-import yammer4j.messages.Messages;
-import yammer4j.messages.MessagesImpl;
-import yammer4j.oauth.OAuth;
-import yammer4j.oauth.OAuthImpl;
 
 public final class Yammer {
 
+	public static final String USING_HTTP_PROTOCOL = "https://";
+	public static final String YAMMER_DOMAIN = "www.yammer.com";
+	public static final String YAMMER_BASE_URL = new StringBuilder(
+			USING_HTTP_PROTOCOL).append(YAMMER_DOMAIN).toString();
+	public static final String YAMMER_API_SUFFIX = "/api/v1";
+	public static final String YAMMER_API_BASE_URL = new StringBuilder(
+			YAMMER_BASE_URL).append(YAMMER_API_SUFFIX).toString();
 
-	public static final String YAMMER_DOMAIN="www.yammer.com";
-	public static final String YAMMER_API_AUFFIX="/api/v1";
-	public static final String USING_HTTO_PROTOCOL="https://";
-	public static final OAuth oauth = initOAuthApi();
-	public static final Messages messages = initMessagesApi();
+	public static final OAuthApi oauth = initOAuthApi();
 
-	private static OAuth initOAuthApi(){
-		return new OAuthImpl();
+	private static OAuthApi initOAuthApi() {
+		return new OAuthApiImpl();
 	}
-
-	private static Messages initMessagesApi() {
-		return new MessagesImpl();
-	}
-
-
 }
