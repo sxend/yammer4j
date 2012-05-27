@@ -3,7 +3,6 @@ package yammer4j;
 import java.io.IOException;
 import java.util.Random;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
