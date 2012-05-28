@@ -1,4 +1,4 @@
-package yammer4j.users;
+package yammer4j;
 
 public interface Users {
 

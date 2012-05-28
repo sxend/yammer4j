@@ -1,6 +1,6 @@
 package yammer4j.exception;
 
-public class YammerException extends Exception {
+public class YammerException extends RuntimeException {
 
 	/**
 	 *
@@ -9,8 +9,8 @@ public class YammerException extends Exception {
 
 	public static final String UNSUPPORTED_API_EXCEPTION = "そのAPIはサポートしてへんで！";
 
-	public YammerException(String messages) {
-		super(messages);
+	public YammerException(Exception e){
+		super(e);
 	}
 
 }
