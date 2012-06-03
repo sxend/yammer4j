@@ -5,14 +5,16 @@ import java.util.Random;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
 
 import yammer4j.util.RegexUtil;
 
-public class AuthorizeImpl implements Authorize {
+public class OAuthImpl implements OAuth {
 
 	// private OAuthTokenPair oAuthTokenPair = null;
 	private String consumerKey = null;
@@ -26,18 +28,21 @@ public class AuthorizeImpl implements Authorize {
 
 	private String authorizeUrl = null;
 
-	AuthorizeImpl(String consumerKey, String consumerKeySecret)
-			throws ClientProtocolException, IOException {
+	OAuthImpl() {}
+
+	public RequestTokenRespose getRequestToken(String consumerKey, String consumerKeySecret) throws ParseException, ClientProtocolException, IOException
+			{
 		this.consumerKey = consumerKey;
 		this.consumerKeySecret = consumerKeySecret;
 		this.signature = consumerKeySecret + "%26";
 
-		HttpPost httpPost = new HttpPost(REQUEST_TOKEN_URL);
-		httpPost = (HttpPost) addAuthorizeHeader(httpPost);
+		HttpGet httpGet = new HttpGet(REQUEST_TOKEN_URL);
+		httpGet = (HttpGet) addAuthorizeHeader(httpGet);
 
 		HttpResponse httpResponse = YammerHttpClient.request(httpPost);
 		String response = EntityUtils.toString(YammerHttpClient.request(
 				httpPost).getEntity());
+		///oauth/request_token叩いたあとの戻り値どうするよ
 		this.authorizeUrl = AUTHORIZE_URL + "?" + response;
 		String oAuthToken = RegexUtil.regexExtraction(
 				"oauth_token=([0-9a-zA-Z]*)", response);
@@ -47,6 +52,7 @@ public class AuthorizeImpl implements Authorize {
 		this.oAuthTokenSecret = oAuthTokenSecret;
 		this.signature += oAuthTokenSecret;
 
+		return null;
 		// this.setOAuthTokenPair(new OAuthTokenPair(oAuthToken,
 		// oAuthTokenSecret));
 

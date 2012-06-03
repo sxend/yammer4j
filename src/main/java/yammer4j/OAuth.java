@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpUriRequest;
 
-public interface Authorize {
+public interface OAuth extends YammerApi{
 
 	public static final String AUTHORIZE_HEADER="Authorization";
 	public static final String AUTHORIZE_HEADER_OAUTH="OAuth ";
