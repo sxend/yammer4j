@@ -5,14 +5,18 @@ import java.util.regex.Pattern;
 
 public final class RegexUtil {
 
-		public final static String regexExtraction(String regex, String target) {
-			Pattern pattern = Pattern.compile(regex);
-			Matcher matcher = pattern.matcher(target);
-			if (matcher.find()) {
-				return matcher.group(1);
-			} else {
-				throw new IllegalArgumentException("not matching.");
-			}
-		}
+    public static final String regexExtraction(String regex, String target, int groupNum) {
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(target);
+        if (matcher.find()) {
+            return matcher.group(groupNum);
+        } else {
+            throw new IllegalArgumentException("not matching.");
+        }
+    }
+
+    public static final String regexExtraction(String regex, String target) {
+        return regexExtraction(regex, target, 1);
+    }
 
 }

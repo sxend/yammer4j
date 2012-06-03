@@ -12,7 +12,7 @@ import org.apache.http.util.EntityUtils;
 
 import yammer4j.util.RegexUtil;
 
-public class AuthorizeImpl implements Authorize {
+public class OAuthImpl implements OAuth {
 
 	// private OAuthTokenPair oAuthTokenPair = null;
 	private String consumerKey = null;
@@ -26,7 +26,7 @@ public class AuthorizeImpl implements Authorize {
 
 	private String authorizeUrl = null;
 
-	AuthorizeImpl(String consumerKey, String consumerKeySecret)
+	OAuthImpl(String consumerKey, String consumerKeySecret)
 			throws ClientProtocolException, IOException {
 		this.consumerKey = consumerKey;
 		this.consumerKeySecret = consumerKeySecret;
@@ -39,6 +39,7 @@ public class AuthorizeImpl implements Authorize {
 		String response = EntityUtils.toString(YammerHttpClient.request(
 				httpPost).getEntity());
 		this.authorizeUrl = AUTHORIZE_URL + "?" + response;
+
 		String oAuthToken = RegexUtil.regexExtraction(
 				"oauth_token=([0-9a-zA-Z]*)", response);
 		this.oAuthToken = oAuthToken;
@@ -52,7 +53,10 @@ public class AuthorizeImpl implements Authorize {
 
 	}
 
-	public boolean verify(String oAuthVerifier) throws ClientProtocolException,
+	OAuthImpl() {
+    }
+
+    public boolean verify(String oAuthVerifier) throws ClientProtocolException,
 			IOException {
 
 		HttpPost httpPost = new HttpPost(ACCESS_TOKEN_URL);
