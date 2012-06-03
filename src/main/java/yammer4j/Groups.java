@@ -1,5 +1,5 @@
 package yammer4j;
 
-interface Groups {
+public interface Groups {
 
 }

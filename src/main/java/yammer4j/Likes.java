@@ -1,5 +1,5 @@
 package yammer4j;
 
-interface Likes {
+public interface Likes {
 
 }

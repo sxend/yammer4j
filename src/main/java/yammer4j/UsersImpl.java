@@ -7,4 +7,6 @@ final class UsersImpl extends AbstractYammerApi
         super(client);
     }
 
+
+
 }

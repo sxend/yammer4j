@@ -1,13 +1,12 @@
 package yammer4j;
 
+import yammer4j.obj.AuthorizedKeySet;
+
 public final class Yammer {
 
     public static final String YAMMER_URL = "https://www.yammer.com";
     public static final String YAMMER_API_BASE_URL = YAMMER_URL + "/api/v1";
 
-    public static final Yammer getYammer() {
-        return new Yammer();
-    }
     public final OAuth oAuth;
     public final Users users;
     public final Messages messages;
@@ -17,7 +16,7 @@ public final class Yammer {
     private final YammerHttpClient client;
 
     private Yammer() {
-        this.client = new YammerHttpClient();
+        this.client = yammerHttpClientFactory();
         this.oAuth = oAuthFactory();
         this.users = usersFactory();
         this.messages = messagesFactory();
@@ -25,8 +24,20 @@ public final class Yammer {
         this.likes = likesFactory();
     }
 
-    public Yammer initAuthorizeElements(String consumerKey, String consumerKeySecret, String oAuthVerifier, String oAuthToken, String oAuthTokenSecret) {
-        this.client.initAuthorizeElements(consumerKey, consumerKeySecret, oAuthVerifier, oAuthToken, oAuthTokenSecret);
+    public static final Yammer getYammer() {
+        return new Yammer();
+    }
+
+    public static final Yammer getYammer(AuthorizedKeySet authorizedKeySet) {
+        return new Yammer().setAuthorizedKeySet(authorizedKeySet);
+    }
+
+    private YammerHttpClient yammerHttpClientFactory() {
+        return new YammerHttpClient();
+    }
+
+    public Yammer setAuthorizedKeySet(AuthorizedKeySet authorizedKeySet) {
+        this.client.setAuthorizeElements(authorizedKeySet);
         return this;
     }
 
