@@ -15,45 +15,42 @@ public final class Yammer {
     public final OAuth oAuth;
     public final Users users;
     public final Messages messages;
+    public final Groups groups;
+    public final Likes likes;
+    private final YammerHttpClient client;
 
-    private Yammer(String consumerKey, String consumerKeySecret) {
-        this.oAuth = oAuthFactory(consumerKey, consumerKeySecret);
-        this.users = usersFactory();
-        this.messages = messagesFactory();
-    }
 
     private Yammer() {
+        this.client= new YammerHttpClient();
         this.oAuth = oAuthFactory();
         this.users = usersFactory();
         this.messages = messagesFactory();
+        this.groups = groupsFactory();
+        this.likes = likesFactory();
     }
 
-    public static final Yammer getYammer(String consumerKey, String consumerKeySecret) throws ParseException, IOException {
-        return new Yammer(consumerKey, consumerKeySecret);
+    private Likes likesFactory() {
+        return new LikesImpl(client);
+    }
+    private Groups groupsFactory() {
+        return new GroupsImpl(client);
+    }
+    public void initAuthorizeElements(String consumerKey, String consumerKeySecret,String oAuthVerifier,String oAuthToken,String oAuthTokenSecret){
+        this.client.initAuthorizeElements(consumerKey, consumerKeySecret, oAuthVerifier, oAuthToken, oAuthTokenSecret);
     }
 
     public static final Yammer getYammer() {
         return new Yammer();
     }
 
-    private final OAuth oAuthFactory(String consumerKey, String consumerKeySecret) {
-        try {
-            return new OAuthImpl(consumerKey, consumerKeySecret);
-        } catch (ClientProtocolException e) {
-            throw new YammerException(e);
-        } catch (IOException e) {
-            throw new YammerException(e);
-        }
-    }
-
     private final OAuth oAuthFactory() {
-        return new OAuthImpl();
+        return new OAuthImpl(client);
     }
 
     private final Users usersFactory() {
-        return new UsersImpl();
+        return new UsersImpl(client);
     }
     private final Messages messagesFactory() {
-        return new MessagesImpl();
+        return new MessagesImpl(client);
     }
 }

@@ -18,5 +18,4 @@ public final class RegexUtil {
     public static final String regexExtraction(String regex, String target) {
         return regexExtraction(regex, target, 1);
     }
-
 }
