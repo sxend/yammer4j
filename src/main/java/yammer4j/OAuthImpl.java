@@ -1,12 +1,9 @@
 package yammer4j;
 
-import org.apache.http.client.methods.HttpUriRequest;
-
 import yammer4j.exception.YammerException;
 
 final class OAuthImpl extends AbstractYammerApi
         implements OAuth {
-
 
     protected OAuthImpl(YammerHttpClient client) {
         super(client);

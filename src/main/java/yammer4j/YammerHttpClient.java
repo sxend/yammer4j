@@ -12,8 +12,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 class YammerHttpClient {
 
-    public static final String AUTHORIZE_HEADER = "Authorization";
+    private class OAuthHeaderValueMap extends HashMap<String, String> {
+        String getkeyEqValue(String key) {
+            String value = super.get(key);
+            if (value != null && !"".equals(value)) {
+                return key + "=" + value;
+            }
+            return "";
+        }
+    }
 
+    public static final String AUTHORIZE_HEADER = "Authorization";
     private static final String AUTHORIZE_HEADER_PREFIX = "OAuth ";
     public static final String OAUTH_CONSUMER_KEY = "oauth_consumer_key";
     public static final String OAUTH_TOKEN = "oauth_token";
@@ -24,17 +33,17 @@ class YammerHttpClient {
     public static final String OAUTH_SIGNATURE = "oauth_signature";
     private final HttpClient httpClient = new DefaultHttpClient();
     private final Random random = new Random(System.currentTimeMillis());
-    private final OAuthHeaderValueMap map = new OAuthHeaderValueMap();
 
+    private final OAuthHeaderValueMap map = new OAuthHeaderValueMap();
     private String consumerKey;
     private String consumerKeySecret;
     private String oAuthVerifier;
     private String oAuthToken;
+
     private String oAuthTokenSecret;
 
-    HttpResponse request(HttpUriRequest httpUriRequest) throws ClientProtocolException, IOException {
-        addAuthorizationHeader(httpUriRequest);
-        return httpClient.execute(httpUriRequest);
+    private void addAuthorizationHeader(HttpUriRequest httpUriRequest) {
+
     }
 
     void initAuthorizeElements(String consumerKey, String consumerKeySecret, String oAuthVerifier, String oAuthToken, String oAuthTokenSecret) {
@@ -46,25 +55,16 @@ class YammerHttpClient {
         this.oAuthTokenSecret = oAuthTokenSecret;
     }
 
-    void setAuthorizeElements(String key, String value) {
-
-    }
-
-    private void addAuthorizationHeader(HttpUriRequest httpUriRequest) {
-
-    }
-
     private int nextNonce() {
         return random.nextInt();
     }
 
-    private class OAuthHeaderValueMap extends HashMap<String, String> {
-        String getkeyEqValue(String key) {
-            String value = super.get(key);
-            if (value != null && !"".equals(value)) {
-                return key + "=" + value;
-            }
-            return "";
-        }
+    HttpResponse request(HttpUriRequest httpUriRequest) throws ClientProtocolException, IOException {
+        addAuthorizationHeader(httpUriRequest);
+        return httpClient.execute(httpUriRequest);
+    }
+
+    void setAuthorizeElements(String key, String value) {
+
     }
 }
