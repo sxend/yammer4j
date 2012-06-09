@@ -1,5 +1,12 @@
 package yammer4j;
 
-public class UsersImpl implements Users {
+final class UsersImpl extends AbstractYammerApi
+        implements Users {
+
+    protected UsersImpl(YammerHttpClient client) {
+        super(client);
+    }
+
+
 
 }

@@ -1,110 +1,58 @@
 package yammer4j;
 
 import java.io.IOException;
-import java.util.Random;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.util.EntityUtils;
 
+import yammer4j.obj.AuthorizedKeySet;
+import yammer4j.obj.ConsumerKeyPair;
+import yammer4j.obj.TokenPair;
+import yammer4j.obj.UnAuthorizedKeySet;
 import yammer4j.util.RegexUtil;
 
-public class OAuthImpl implements OAuth {
+final class OAuthImpl extends AbstractYammerApi
+        implements OAuth {
 
-	// private OAuthTokenPair oAuthTokenPair = null;
-	private String consumerKey = null;
-	private String consumerKeySecret = null;
-	private String oAuthToken = null;
-	private String oAuthTokenSecret = null;
-	private String signature = null;
-	private String signatureMethod = "PLAINTEXT";
-	private String verifier = null;
-	private Random nonce = new Random(System.currentTimeMillis());
+    protected OAuthImpl(YammerHttpClient client) {
+        super(client);
+    }
 
-	private String authorizeUrl = null;
+    public AuthorizedKeySet accessToken(String oAuthVerifier, UnAuthorizedKeySet unAuthorizedKeySet) throws ClientProtocolException, IOException {
+        AuthorizedKeySet authorizedKeySet = new AuthorizedKeySet();
+        authorizedKeySet.setoAuthVerifier(oAuthVerifier);
+        authorizedKeySet.setConsumerKeyPair(unAuthorizedKeySet.getConsumerKeyPair());
+        authorizedKeySet.setTokenPair(unAuthorizedKeySet.getTokenPair());
+        client.setAuthorizeElements(authorizedKeySet);
+        HttpPost httpPost = new HttpPost(ACCESS_TOKEN_URL);
+        HttpResponse httpResponse = client.request(httpPost);
+        String responseBody = EntityUtils.toString(httpResponse.getEntity());
 
-	OAuthImpl() {}
+        authorizedKeySet.getTokenPair().setToken(RegexUtil.regexExtraction("oauth_token=([0-9a-zA-Z]*)", responseBody));
+        authorizedKeySet.getTokenPair().setTokenSecret(RegexUtil.regexExtraction("oauth_token_secret=([0-9a-zA-Z]*)", responseBody));
+        return authorizedKeySet;
+    }
 
-	public RequestTokenRespose getRequestToken(String consumerKey, String consumerKeySecret) throws ParseException, ClientProtocolException, IOException
-			{
-		this.consumerKey = consumerKey;
-		this.consumerKeySecret = consumerKeySecret;
-		this.signature = consumerKeySecret + "%26";
+    public UnAuthorizedKeySet requestToken(ConsumerKeyPair consumerKeyPair) throws ParseException, IOException {
+        client.setAuthorizeElements(consumerKeyPair);
+        HttpPost httpPost = new HttpPost(REQUEST_TOKEN_URL);
+        HttpResponse httpResponse = client.request(httpPost);
+        String responseBody = EntityUtils.toString(httpResponse.getEntity());
+        UnAuthorizedKeySet unAuthorizedKeySet = new UnAuthorizedKeySet();
+        unAuthorizedKeySet.setConsumerKeyPair(consumerKeyPair);
+        TokenPair tokenPair = new TokenPair();
+        tokenPair.setToken(RegexUtil.regexExtraction("oauth_token=([0-9a-zA-Z]*)", responseBody));
+        tokenPair.setTokenSecret(RegexUtil.regexExtraction("oauth_token_secret=([0-9a-zA-Z]*)", responseBody));
+        unAuthorizedKeySet.setTokenPair(tokenPair);
 
-		HttpGet httpGet = new HttpGet(REQUEST_TOKEN_URL);
-		httpGet = (HttpGet) addAuthorizeHeader(httpGet);
+        return unAuthorizedKeySet;
 
-		HttpResponse httpResponse = YammerHttpClient.request(httpPost);
-		String response = EntityUtils.toString(YammerHttpClient.request(
-				httpPost).getEntity());
-		///oauth/request_token叩いたあとの戻り値どうするよ
-		this.authorizeUrl = AUTHORIZE_URL + "?" + response;
-		String oAuthToken = RegexUtil.regexExtraction(
-				"oauth_token=([0-9a-zA-Z]*)", response);
-		this.oAuthToken = oAuthToken;
-		String oAuthTokenSecret = RegexUtil.regexExtraction(
-				"oauth_token_secret=([0-9a-zA-Z]*)", response);
-		this.oAuthTokenSecret = oAuthTokenSecret;
-		this.signature += oAuthTokenSecret;
+    }
 
-		return null;
-		// this.setOAuthTokenPair(new OAuthTokenPair(oAuthToken,
-		// oAuthTokenSecret));
-
-	}
-
-	public boolean verify(String oAuthVerifier) throws ClientProtocolException,
-			IOException {
-
-		HttpPost httpPost = new HttpPost(ACCESS_TOKEN_URL);
-		httpPost = (HttpPost) addAuthorizeHeader(httpPost);
-		HttpResponse httpResponse = YammerHttpClient.request(httpPost);
-
-		return httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
-	}
-
-	public HttpUriRequest addAuthorizeHeader(HttpUriRequest httpUriRequest) {
-		AuthHeaderBuilder ab = new AuthHeaderBuilder(AUTHORIZE_HEADER_OAUTH);
-		ab.append(OAUTH_CONSUMER_KEY, this.consumerKey)
-				.append(OAUTH_TOKEN, this.oAuthToken)
-				.append(OAUTH_SIGNATURE_METHOD, this.signatureMethod)
-				.append(OAUTH_VERIFIER, this.verifier)
-				.append(OAUTH_TIMESTAMP,
-						String.valueOf(System.currentTimeMillis()))
-				.append(OAUTH_SIGNATURE, this.signature)
-				.append(OAUTH_NONCE,
-						String.valueOf(Math.abs(this.nonce.nextInt())));
-
-		httpUriRequest.addHeader(AUTHORIZE_HEADER, ab.toString());
-		return httpUriRequest;
-	}
-
-	public String getAuthorizeUrl() {
-		return this.authorizeUrl;
-	}
-
-	private class AuthHeaderBuilder {
-		StringBuilder sb;
-
-		private AuthHeaderBuilder(String prefix) {
-			this.sb = new StringBuilder(AUTHORIZE_HEADER_OAUTH);
-		}
-
-		private AuthHeaderBuilder append(String key, String value) {
-			if (key != null && value != null) {
-				sb.append(key).append("=").append(value).append(",");
-			}
-			return this;
-		}
-
-		public String toString() {
-			return sb.toString();
-		}
-	}
-
+    public String getAuthorizedUrl(UnAuthorizedKeySet unAuthorizedKeySet){
+        return AUTHORIZE_URL+"?"+ OAUTH_TOKEN +"="+unAuthorizedKeySet.getTokenPair().getToken();
+    }
 }
