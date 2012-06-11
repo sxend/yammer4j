@@ -15,129 +15,137 @@ import yammer4j.obj.TokenPair;
 
 class YammerHttpClient {
 
+	private final HttpClient httpClient = new DefaultHttpClient();
+	private String consumerKey;
+	private String consumerKeySecret;
+	private String oAuthVerifier;
+	private String token;
+	private String tokenSecret;
+	private Random random = new Random(System.currentTimeMillis());
 
+	YammerHttpClient() {
+	}
 
-    private final HttpClient httpClient = new DefaultHttpClient();
-    private String consumerKey;
-    private String consumerKeySecret;
-    private String oAuthVerifier;
-    private String token;
-    private String tokenSecret;
-    private Random random = new Random(System.currentTimeMillis());
+	YammerHttpClient(AuthorizedKeySet authorizedKeySet) {
+		this.consumerKey = authorizedKeySet.getConsumerKeyPair()
+				.getConsumerKey();
+		this.consumerKeySecret = authorizedKeySet.getConsumerKeyPair()
+				.getConsumerKeySecret();
+		this.oAuthVerifier = authorizedKeySet.getoAuthVerifier();
+		this.token = authorizedKeySet.getTokenPair().getToken();
+		this.tokenSecret = authorizedKeySet.getTokenPair().getTokenSecret();
+	}
 
-    YammerHttpClient() {
-    }
+	private void addAuthorizationHeader(HttpUriRequest httpUriRequest) {
+		httpUriRequest.addHeader(OAuth.AUTHORIZE_HEADER,
+				generateAuthHeaderValue());
+	}
 
-    YammerHttpClient(AuthorizedKeySet authorizedKeySet) {
-        this.consumerKey = authorizedKeySet.getConsumerKeyPair().getConsumerKey();
-        this.consumerKeySecret = authorizedKeySet.getConsumerKeyPair().getConsumerKeySecret();
-        this.oAuthVerifier = authorizedKeySet.getoAuthVerifier();
-        this.token = authorizedKeySet.getTokenPair().getToken();
-        this.tokenSecret = authorizedKeySet.getTokenPair().getTokenSecret();
-    }
+	private String generateAuthHeaderValue() {
+		AuthHeaderAppender authHeaderAppender = new AuthHeaderAppender(
+				OAuth.AUTHORIZE_HEADER_PREFIX);
+		authHeaderAppender.append(getConsumerKeyHeader())
+				.append(getTokenHeader()).append(getSignatureMethodHeader())
+				.append(getTimeStampHeader()).append(getNonceHeader())
+				.append(getVerifierHeader()).append(getSignatureHeader());
+		System.out.println(authHeaderAppender.getAuthHeaderValue());
+		return authHeaderAppender.getAuthHeaderValue();
 
-    private void addAuthorizationHeader(HttpUriRequest httpUriRequest) {
-        httpUriRequest.addHeader(OAuth.AUTHORIZE_HEADER, generateAuthHeaderValue());
-    }
+	}
 
-    private String generateAuthHeaderValue() {
-        AuthHeaderAppender authHeaderAppender = new AuthHeaderAppender(OAuth.AUTHORIZE_HEADER_PREFIX);
-        authHeaderAppender.append(getConsumerKeyHeader()).append(getTokenHeader()).append(getSignatureMethodHeader()).append(getTimeStampHeader()).append(getNonceHeader()).append(getVerifierHeader())
-                .append(getSignatureHeader());
-        System.out.println(authHeaderAppender.getAuthHeaderValue());
-        return authHeaderAppender.getAuthHeaderValue();
+	private String getConsumerKeyHeader() {
+		return strEqJoin(OAuth.OAUTH_CONSUMER_KEY, this.consumerKey);
+	}
 
-    }
+	private String getSignatureMethodHeader() {
+		return strEqJoin(OAuth.OAUTH_SIGNATURE_METHOD, "PLAINTEXT");
+	}
 
-    private String getConsumerKeyHeader() {
-        if (this.consumerKey == null) {
-            return null;
-        }
-        return OAuth.OAUTH_CONSUMER_KEY + "=" + this.consumerKey;
-    }
+	private String getNonceHeader() {
+		return strEqJoin(OAuth.OAUTH_NONCE, String.valueOf(random.nextInt()));
+	}
 
-    private String getSignatureMethodHeader() {
-        return OAuth.OAUTH_SIGNATURE_METHOD + "=" + "PLAINTEXT";
-    }
+	private String getSignatureHeader() {
+		StringBuilder signature = null;
+		if (this.consumerKeySecret != null) {
+			signature = new StringBuilder(this.consumerKeySecret).append("%26");
+			if (this.tokenSecret != null) {
+				signature.append(this.tokenSecret);
+			}
+		}
+		return strEqJoin(OAuth.OAUTH_SIGNATURE, signature.toString());
+	}
 
-    private String getNonceHeader() {
-        return OAuth.OAUTH_NONCE + "=" + random.nextInt();
-    }
+	private String getTimeStampHeader() {
+		return strEqJoin(OAuth.OAUTH_TIMESTAMP,
+				String.valueOf(System.currentTimeMillis()));
+	}
 
-    private String getSignatureHeader() {
-        StringBuilder signature = null;
-        if (this.consumerKeySecret != null) {
-            signature = new StringBuilder(OAuth.OAUTH_SIGNATURE).append("=").append(this.consumerKeySecret).append("%26");
-            if (this.tokenSecret != null) {
-                signature.append(this.tokenSecret);
-            }
-        }
-        return signature.toString();
-    }
+	private String getVerifierHeader() {
 
-    private String getTimeStampHeader() {
-        return OAuth.OAUTH_TIMESTAMP + "=" + System.currentTimeMillis();
-    }
+		return strEqJoin(OAuth.OAUTH_VERIFIER, this.oAuthVerifier);
+	}
 
-    private String getVerifierHeader() {
-        if (this.oAuthVerifier == null) {
-            return null;
-        }
-        return OAuth.OAUTH_VERIFIER + "=" + this.oAuthVerifier;
-    }
+	private String getTokenHeader() {
 
-    private String getTokenHeader() {
-        if (this.token == null) {
-            return null;
-        }
-        return OAuth.OAUTH_TOKEN + "=" + this.token;
-    }
+		return strEqJoin(OAuth.OAUTH_TOKEN, this.token);
+	}
 
-    HttpResponse request(HttpUriRequest httpUriRequest) throws ClientProtocolException, IOException {
-        addAuthorizationHeader(httpUriRequest);
-        return httpClient.execute(httpUriRequest);
+	private String strEqJoin(String str1, String str2) {
+		if (str1 == null || str2 == null) {
+			return null;
+		}
+		return new StringBuilder(str1).append("=").append(str2).toString();
+	}
 
-    }
+	HttpResponse request(HttpUriRequest httpUriRequest)
+			throws ClientProtocolException, IOException {
+		addAuthorizationHeader(httpUriRequest);
+		return httpClient.execute(httpUriRequest);
 
-    void setAuthorizeElements(ConsumerKeyPair consumerKeyPair) {
-        AuthorizedKeySet authorizedKeySet= new AuthorizedKeySet();
-        authorizedKeySet.setConsumerKeyPair(consumerKeyPair);
-        authorizedKeySet.setTokenPair(new TokenPair());
-        setAuthorizeElements(authorizedKeySet);
-    }
+	}
 
-    void setAuthorizeElements(AuthorizedKeySet authorizedKeySet) {
-        this.consumerKey = authorizedKeySet.getConsumerKeyPair().getConsumerKey();
-        this.consumerKeySecret = authorizedKeySet.getConsumerKeyPair().getConsumerKeySecret();
-        this.oAuthVerifier = authorizedKeySet.getoAuthVerifier();
-        this.token = authorizedKeySet.getTokenPair().getToken();
-        this.tokenSecret = authorizedKeySet.getTokenPair().getTokenSecret();
-    }
+	void setAuthorizeElements(ConsumerKeyPair consumerKeyPair) {
+		AuthorizedKeySet authorizedKeySet = new AuthorizedKeySet();
+		authorizedKeySet.setConsumerKeyPair(consumerKeyPair);
+		authorizedKeySet.setTokenPair(new TokenPair());
+		setAuthorizeElements(authorizedKeySet);
+	}
 
-    class AuthHeaderAppender {
-        StringBuilder sb;
+	void setAuthorizeElements(AuthorizedKeySet authorizedKeySet) {
+		this.consumerKey = authorizedKeySet.getConsumerKeyPair()
+				.getConsumerKey();
+		this.consumerKeySecret = authorizedKeySet.getConsumerKeyPair()
+				.getConsumerKeySecret();
+		this.oAuthVerifier = authorizedKeySet.getoAuthVerifier();
+		this.token = authorizedKeySet.getTokenPair().getToken();
+		this.tokenSecret = authorizedKeySet.getTokenPair().getTokenSecret();
+	}
 
-        int elementCount = 0;
+	class AuthHeaderAppender {
+		StringBuilder sb;
 
-        AuthHeaderAppender append(String headerElement) {
-            if (headerElement != null) {
-                if (elementCount != 0) {
-                    sb.append(",");
-                }
-                sb.append(headerElement);
-                elementCount++;
-            }
-            return this;
-        }
+		boolean commaFlg = false;
 
-        AuthHeaderAppender(String headerPrifix) {
-            sb = new StringBuilder(headerPrifix);
-        }
+		AuthHeaderAppender append(String headerElement) {
+			if (headerElement != null) {
+				if (commaFlg) {
+					sb.append(",");
+				}
+				sb.append(headerElement);
+				commaFlg = true;
+			}
+			return this;
+		}
 
-        String getAuthHeaderValue() {
-            return sb.toString();
-        }
+		AuthHeaderAppender(String headerPrifix) {
+			sb = new StringBuilder(headerPrifix);
+		}
 
-    }
+		String getAuthHeaderValue() {
+			return sb.toString();
+		}
+
+	}
 
 }
