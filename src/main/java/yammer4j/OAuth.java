@@ -27,9 +27,9 @@ public interface OAuth {
     // private static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
     public static final String OAUTH_VERIFIER = "oauth_verifier";
 
-    public AuthorizedKeySet accessToken(String oAuthVerifier,UnAuthorizedKeySet unAuthorizedKeySet) throws ClientProtocolException, IOException;
+    public AuthorizedKeySet accessToken(String oAuthVerifier,UnAuthorizedKeySet unAuthorizedKeySet);
 
-    public UnAuthorizedKeySet requestToken(ConsumerKeyPair consumerKeyPair) throws YammerException, ParseException, IOException;
+    public UnAuthorizedKeySet requestToken(ConsumerKeyPair consumerKeyPair) throws YammerException;
 
     public String getAuthorizedUrl(UnAuthorizedKeySet unAuthorizedKeySet);
 }
