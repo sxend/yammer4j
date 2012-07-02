@@ -48,7 +48,7 @@ class YammerHttpClient {
 				.append(getTokenHeader()).append(getSignatureMethodHeader())
 				.append(getTimeStampHeader()).append(getNonceHeader())
 				.append(getVerifierHeader()).append(getSignatureHeader());
-		System.out.println(authHeaderAppender.getAuthHeaderValue());
+
 		return authHeaderAppender.getAuthHeaderValue();
 
 	}
@@ -142,7 +142,7 @@ class YammerHttpClient {
 			sb = new StringBuilder(headerPrifix);
 		}
 
-		String getAuthHeaderValue() {
+		String getAuthHeaderValue(){
 			return sb.toString();
 		}
 

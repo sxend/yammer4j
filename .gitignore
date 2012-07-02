@@ -3,5 +3,4 @@
 *.settings
 *.settings/*
 *target/*
-*src/main/java/test
-*src/main/java/test/*
+*src/test/*
