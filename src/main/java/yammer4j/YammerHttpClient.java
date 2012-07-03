@@ -142,7 +142,7 @@ class YammerHttpClient {
 			sb = new StringBuilder(headerPrifix);
 		}
 
-		String getAuthHeaderValue(){
+		String getAuthHeaderValue() {
 			return sb.toString();
 		}
 
