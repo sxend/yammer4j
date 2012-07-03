@@ -3,4 +3,4 @@
 *.settings
 *.settings/*
 *target/*
-*src/test/resources/test-hidden.properties
+*src/test/resources/hidden.properties
