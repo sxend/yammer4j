@@ -19,8 +19,8 @@ public class YammerTest {
 
 		Yammer yammer = Yammer.getYammer();
 		ConsumerKeyPair consumerKeyPair = new ConsumerKeyPair(
-				HiddenPropertiesUtil.getString("consumerKey"),
-				HiddenPropertiesUtil.getString("consumerKeySecret"));
+				HiddenProperties.getString("consumerKey"),
+				HiddenProperties.getString("consumerKeySecret"));
 
 		UnAuthorizedKeySet unAuthorizedKeySet = yammer.oAuth
 				.requestToken(consumerKeyPair);
@@ -50,13 +50,14 @@ public class YammerTest {
 		Assert.assertNotNull(unAuthorizedKeySet.getTokenPair().getTokenSecret());
 		resultObjects.add(unAuthorizedKeySet.getTokenPair().getTokenSecret());
 
-		Assert.assertEquals(HiddenPropertiesUtil.getString("consumerKey"),
+		Assert.assertEquals(HiddenProperties.getString("consumerKey"),
 				unAuthorizedKeySet.getConsumerKeyPair().getConsumerKey());
-		Assert.assertEquals(HiddenPropertiesUtil.getString("consumerKeySecret"),
+		Assert.assertEquals(HiddenProperties.getString("consumerKeySecret"),
 				unAuthorizedKeySet.getConsumerKeyPair().getConsumerKeySecret());
 
 		JUnitResultUtil.toString(FLAG, resultObjects.toArray());
 		JUnitResultUtil.timeStamp();
+
 	}
 
 }

@@ -6,6 +6,5 @@ public class OAuthTest {
 
 	@Test
 	public void oAuthTest() {
-
 	}
 }

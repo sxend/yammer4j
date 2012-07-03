@@ -3,13 +3,13 @@ package yammer4j;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class HiddenPropertiesUtil {
-	private static final String BUNDLE_NAME = "test-hidden"; //$NON-NLS-1$
+public class HiddenProperties {
+	private static final String BUNDLE_NAME = "hidden"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(BUNDLE_NAME);
 
-	private HiddenPropertiesUtil() {
+	private HiddenProperties() {
 	}
 
 	public static String getString(String key) {
