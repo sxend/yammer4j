@@ -9,6 +9,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import yammer4j.exception.YammerException;
 import yammer4j.obj.AuthorizedKeySet;
 import yammer4j.obj.ConsumerKeyPair;
 import yammer4j.obj.TokenPair;
@@ -99,11 +100,21 @@ class YammerHttpClient {
 	}
 
 	HttpResponse request(HttpUriRequest httpUriRequest)
-			throws ClientProtocolException, IOException {
+			 {
 		addAuthorizationHeader(httpUriRequest);
-		return httpClient.execute(httpUriRequest);
-
+		HttpResponse httpResponse = null;
+		try {
+			httpResponse = httpClient.execute(httpUriRequest);
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+			throw new YammerException(e,httpResponse);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new YammerException(e,httpResponse);
+		}
+		return httpResponse;
 	}
+
 
 	void setAuthorizeElements(ConsumerKeyPair consumerKeyPair) {
 		AuthorizedKeySet authorizedKeySet = new AuthorizedKeySet();

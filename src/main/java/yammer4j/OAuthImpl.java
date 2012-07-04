@@ -27,6 +27,7 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 		authorizedKeySet.setConsumerKeyPair(unAuthorizedKeySet
 				.getConsumerKeyPair());
 		authorizedKeySet.setTokenPair(unAuthorizedKeySet.getTokenPair());
+		// 未認証なキーたちを詰める
 		client.setAuthorizeElements(authorizedKeySet);
 		HttpPost httpPost = new HttpPost(ACCESS_TOKEN_URL);
 		HttpResponse httpResponse = null;
@@ -40,12 +41,15 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 			throw new YammerException(e);
 		}
 
+		// token変わってるので詰め直す
 		authorizedKeySet.getTokenPair().setToken(
-				RegexUtil.regexExtraction("oauth_token=([0-9a-zA-Z]*)",
+				RegexUtil.regexExtraction(OAUTH_TOKEN+"=([0-9a-zA-Z]*)",
 						responseBody));
 		authorizedKeySet.getTokenPair().setTokenSecret(
-				RegexUtil.regexExtraction("oauth_token_secret=([0-9a-zA-Z]*)",
+				RegexUtil.regexExtraction(OAUTH_TOKEN_SECRET+"=([0-9a-zA-Z]*)",
 						responseBody));
+		client.setAuthorizeElements(authorizedKeySet);
+		//今後は認証済みのauthorizedKeySetやつを使う
 		return authorizedKeySet;
 	}
 
@@ -66,9 +70,9 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 		unAuthorizedKeySet.setConsumerKeyPair(consumerKeyPair);
 		TokenPair tokenPair = new TokenPair();
 		tokenPair.setToken(RegexUtil.regexExtraction(
-				"oauth_token=([0-9a-zA-Z]*)", responseBody));
+				OAUTH_TOKEN+"=([0-9a-zA-Z]*)", responseBody));
 		tokenPair.setTokenSecret(RegexUtil.regexExtraction(
-				"oauth_token_secret=([0-9a-zA-Z]*)", responseBody));
+				OAUTH_TOKEN_SECRET+"=([0-9a-zA-Z]*)", responseBody));
 		unAuthorizedKeySet.setTokenPair(tokenPair);
 
 		return unAuthorizedKeySet;

@@ -1,11 +1,13 @@
 package yammer4j;
 
-import java.io.IOException;
+import org.apache.http.HttpResponse;
 
-import org.apache.http.client.ClientProtocolException;
 
 public interface Messages {
-	public static final String Massages = "/messages.json";
+	public static final String Messages = "/messages.json";
+	public static final String MessagesSent = "/messages/sent.json";
 
-	public String get() throws ClientProtocolException, IOException;
+	public HttpResponse getMessages();
+
+	public HttpResponse getMessagesSent();
 }

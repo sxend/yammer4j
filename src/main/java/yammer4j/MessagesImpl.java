@@ -13,10 +13,14 @@ final class MessagesImpl extends AbstractYammerApi implements Messages {
 		super(client);
 	}
 
-	public String get() throws ClientProtocolException, IOException {
-		HttpGet httpGet = new HttpGet(BASE_API_URL + Massages);
-		HttpResponse httpResponse = client.request(httpGet);
-		return EntityUtils.toString(httpResponse.getEntity());
+	public HttpResponse getMessages() {
+		HttpGet httpGet = new HttpGet(BASE_API_URL + Messages);
+		return client.request(httpGet);
+	}
+
+	public HttpResponse getMessagesSent() {
+		HttpGet httpGet = new HttpGet(BASE_API_URL + MessagesSent);
+		return client.request(httpGet);
 	}
 
 }

@@ -1,19 +1,26 @@
 package yammer4j;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import yammer4j.obj.AuthorizedKeySet;
 import yammer4j.obj.ConsumerKeyPair;
 import yammer4j.obj.UnAuthorizedKeySet;
 
 public class YammerTest {
-	private static final boolean FLAG = true;
+
+	public static  AuthorizedKeySet authorizedKeySet=null;
+
+
 
 	@Test
-	public void yammerTest() {
+	public void yammerTest() throws IOException {
 		JUnitResultUtil.timeStamp();
 		List<Object> resultObjects = new ArrayList<Object>();
 
@@ -55,9 +62,14 @@ public class YammerTest {
 		Assert.assertEquals(HiddenProperties.getString("consumerKeySecret"),
 				unAuthorizedKeySet.getConsumerKeyPair().getConsumerKeySecret());
 
-		JUnitResultUtil.toString(FLAG, resultObjects.toArray());
-		JUnitResultUtil.timeStamp();
+		System.out.println(yammer.oAuth.getAuthorizedUrl(unAuthorizedKeySet));
 
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String oAuthVerifier = br.readLine();
+
+		AuthorizedKeySet authorizedKeySet = yammer.oAuth.accessToken(oAuthVerifier, unAuthorizedKeySet);
+
+		this.authorizedKeySet = authorizedKeySet;
 	}
 
 }

@@ -13,14 +13,13 @@ public interface OAuth {
 	public static final String AUTHORIZE_HEADER = "Authorization";
 	public static final String AUTHORIZE_HEADER_PREFIX = "OAuth ";
 	public static final String OAUTH_CONSUMER_KEY = "oauth_consumer_key";
-	// private static final String OAUTH_CONSUMER_KEY_SECRET =
-	// "oauth_consumer_key_secret";
+	public static final String OAUTH_CONSUMER_KEY_SECRET = "oauth_consumer_key_secret";
 	public static final String OAUTH_TIMESTAMP = "oauth_timestamp";
 	public static final String OAUTH_NONCE = "oauth_nonce";
 	public static final String OAUTH_SIGNATURE_METHOD = "oauth_signature_method";
 	public static final String OAUTH_SIGNATURE = "oauth_signature";
 	public static final String OAUTH_TOKEN = "oauth_token";
-	// private static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
+	public static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
 	public static final String OAUTH_VERIFIER = "oauth_verifier";
 
 	public AuthorizedKeySet accessToken(String oAuthVerifier,
