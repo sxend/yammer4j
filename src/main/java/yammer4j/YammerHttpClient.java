@@ -112,6 +112,7 @@ class YammerHttpClient {
 			e.printStackTrace();
 			throw new YammerException(e,httpResponse);
 		}
+
 		return httpResponse;
 	}
 

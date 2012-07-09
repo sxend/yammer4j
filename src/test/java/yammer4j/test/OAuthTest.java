@@ -1,4 +1,4 @@
-package yammer4j;
+package yammer4j.test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,25 +9,22 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import yammer4j.Yammer;
 import yammer4j.obj.AuthorizedKeySet;
 import yammer4j.obj.ConsumerKeyPair;
 import yammer4j.obj.UnAuthorizedKeySet;
 
-public class YammerTest {
-
-	public static  AuthorizedKeySet authorizedKeySet=null;
-
-
+public class OAuthTest {
 
 	@Test
-	public void yammerTest() throws IOException {
-		JUnitResultUtil.timeStamp();
+	public void oAuthTest() throws IOException {
+		TestUtil.timeStamp();
 		List<Object> resultObjects = new ArrayList<Object>();
 
 		Yammer yammer = Yammer.getYammer();
 		ConsumerKeyPair consumerKeyPair = new ConsumerKeyPair(
-				HiddenProperties.getString("consumerKey"),
-				HiddenProperties.getString("consumerKeySecret"));
+				HiddenProperties.getString("oAuthTest-consumerKey"),
+				HiddenProperties.getString("oAuthTest-consumerKeySecret"));
 
 		UnAuthorizedKeySet unAuthorizedKeySet = yammer.oAuth
 				.requestToken(consumerKeyPair);
@@ -57,9 +54,9 @@ public class YammerTest {
 		Assert.assertNotNull(unAuthorizedKeySet.getTokenPair().getTokenSecret());
 		resultObjects.add(unAuthorizedKeySet.getTokenPair().getTokenSecret());
 
-		Assert.assertEquals(HiddenProperties.getString("consumerKey"),
+		Assert.assertEquals(HiddenProperties.getString("oAuthTest-consumerKey"),
 				unAuthorizedKeySet.getConsumerKeyPair().getConsumerKey());
-		Assert.assertEquals(HiddenProperties.getString("consumerKeySecret"),
+		Assert.assertEquals(HiddenProperties.getString("oAuthTest-consumerKeySecret"),
 				unAuthorizedKeySet.getConsumerKeyPair().getConsumerKeySecret());
 
 		System.out.println(yammer.oAuth.getAuthorizedUrl(unAuthorizedKeySet));
@@ -69,7 +66,6 @@ public class YammerTest {
 
 		AuthorizedKeySet authorizedKeySet = yammer.oAuth.accessToken(oAuthVerifier, unAuthorizedKeySet);
 
-		this.authorizedKeySet = authorizedKeySet;
+		TestUtil.timeStamp();
 	}
-
 }

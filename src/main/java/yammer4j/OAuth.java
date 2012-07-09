@@ -1,5 +1,7 @@
 package yammer4j;
 
+import org.apache.http.HttpResponse;
+
 import yammer4j.exception.YammerException;
 import yammer4j.obj.AuthorizedKeySet;
 import yammer4j.obj.ConsumerKeyPair;
@@ -29,4 +31,12 @@ public interface OAuth {
 			throws YammerException;
 
 	public String getAuthorizedUrl(UnAuthorizedKeySet unAuthorizedKeySet);
+
+	public class OAuthResponse extends YammerResponse{
+
+		public OAuthResponse(HttpResponse httpResponse) {
+			super(httpResponse);
+		}
+
+	}
 }

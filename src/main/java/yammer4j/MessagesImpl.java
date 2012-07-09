@@ -1,11 +1,7 @@
 package yammer4j;
 
-import java.io.IOException;
-
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
 
 final class MessagesImpl extends AbstractYammerApi implements Messages {
 
@@ -13,14 +9,26 @@ final class MessagesImpl extends AbstractYammerApi implements Messages {
 		super(client);
 	}
 
-	public HttpResponse getMessages() {
+	public MessagesResponse getMessages() {
 		HttpGet httpGet = new HttpGet(BASE_API_URL + Messages);
-		return client.request(httpGet);
+		HttpResponse httpResponse = client.request(httpGet);
+
+		return parsingObject(httpResponse);
 	}
 
-	public HttpResponse getMessagesSent() {
+	public MessagesResponse getMessagesSent() {
 		HttpGet httpGet = new HttpGet(BASE_API_URL + MessagesSent);
-		return client.request(httpGet);
+		HttpResponse httpResponse =  client.request(httpGet);
+		return parsingObject(httpResponse);
 	}
+
+
+	@Override
+	protected MessagesResponse parsingObject(HttpResponse httpResponse) {
+		MessagesResponse messagesResponse = new MessagesResponse(httpResponse);
+
+		return messagesResponse;
+	}
+
 
 }

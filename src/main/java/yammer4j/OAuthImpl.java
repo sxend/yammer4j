@@ -83,4 +83,12 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 		return AUTHORIZE_URL + "?" + OAUTH_TOKEN + "="
 				+ unAuthorizedKeySet.getTokenPair().getToken();
 	}
+
+	@Override
+	protected OAuthResponse parsingObject(HttpResponse httpResponse) {
+		OAuthResponse oAuthResponse = new OAuthResponse(httpResponse);
+		return oAuthResponse;
+	}
+
+
 }

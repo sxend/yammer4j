@@ -5,6 +5,14 @@ public class TokenPair {
 	private String token;
 	private String tokenSecret;
 
+	public TokenPair(String token, String tokenSecret) {
+		this.token = token;
+		this.tokenSecret = tokenSecret;
+	}
+
+	public TokenPair() {
+	}
+
 	public void setToken(String token) {
 		this.token = token;
 	}
