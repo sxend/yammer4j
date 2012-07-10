@@ -32,6 +32,10 @@ public interface OAuth {
 
 	public String getAuthorizedUrl(UnAuthorizedKeySet unAuthorizedKeySet);
 
+	public OAuthResponse getTokens();
+
+	public OAuthResponse postTokens();
+
 	public class OAuthResponse extends YammerResponse{
 
 		public OAuthResponse(HttpResponse httpResponse) {

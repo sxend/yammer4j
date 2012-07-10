@@ -7,15 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import yammer4j.Yammer;
+import yammer4j.Messages.MessagesResponse;
 import yammer4j.obj.AuthorizedKeySet;
 import yammer4j.obj.ConsumerKeyPair;
 import yammer4j.obj.UnAuthorizedKeySet;
 
 public class OAuthTest {
 
+//	@Ignore
 	@Test
 	public void oAuthTest() throws IOException {
 		TestUtil.timeStamp();
@@ -65,6 +68,13 @@ public class OAuthTest {
 		String oAuthVerifier = br.readLine();
 
 		AuthorizedKeySet authorizedKeySet = yammer.oAuth.accessToken(oAuthVerifier, unAuthorizedKeySet);
+
+		MessagesResponse messagesResponse = yammer.messages.getMessages();
+		Assert.assertEquals(Integer.valueOf(200), messagesResponse.getStatusCode());
+
+		Yammer yammer2 = Yammer.getYammer(authorizedKeySet);
+		MessagesResponse messagesResponse2 = yammer2.messages.getMessages();
+		Assert.assertEquals(Integer.valueOf(200), messagesResponse2.getStatusCode());
 
 		TestUtil.timeStamp();
 	}

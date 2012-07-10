@@ -20,7 +20,7 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 		super(client);
 	}
 
-	public AuthorizedKeySet accessToken(String oAuthVerifier,
+	public  AuthorizedKeySet accessToken(String oAuthVerifier,
 			UnAuthorizedKeySet unAuthorizedKeySet) {
 		AuthorizedKeySet authorizedKeySet = new AuthorizedKeySet();
 		authorizedKeySet.setoAuthVerifier(oAuthVerifier);
@@ -53,7 +53,7 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 		return authorizedKeySet;
 	}
 
-	public UnAuthorizedKeySet requestToken(ConsumerKeyPair consumerKeyPair) {
+	public  UnAuthorizedKeySet requestToken(ConsumerKeyPair consumerKeyPair) {
 		client.setAuthorizeElements(consumerKeyPair);
 		HttpPost httpPost = new HttpPost(REQUEST_TOKEN_URL);
 		HttpResponse httpResponse = null;
@@ -79,7 +79,7 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 
 	}
 
-	public String getAuthorizedUrl(UnAuthorizedKeySet unAuthorizedKeySet) {
+	public  String getAuthorizedUrl(UnAuthorizedKeySet unAuthorizedKeySet) {
 		return AUTHORIZE_URL + "?" + OAUTH_TOKEN + "="
 				+ unAuthorizedKeySet.getTokenPair().getToken();
 	}
@@ -88,6 +88,16 @@ final class OAuthImpl extends AbstractYammerApi implements OAuth {
 	protected OAuthResponse parsingObject(HttpResponse httpResponse) {
 		OAuthResponse oAuthResponse = new OAuthResponse(httpResponse);
 		return oAuthResponse;
+	}
+
+	public OAuthResponse getTokens() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	public OAuthResponse postTokens() {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
 	}
 
 

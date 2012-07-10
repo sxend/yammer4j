@@ -2,10 +2,13 @@ package yammer4j.test;
 
 import java.util.Date;
 
+import org.junit.Ignore;
+
 import yammer4j.obj.AuthorizedKeySet;
 import yammer4j.obj.ConsumerKeyPair;
 import yammer4j.obj.TokenPair;
 
+@Ignore
 public class TestUtil {
 
 	public static void timeStamp() {

@@ -23,8 +23,10 @@ class YammerHttpClient {
 	private String token;
 	private String tokenSecret;
 	private Random random = new Random(System.currentTimeMillis());
+	private boolean authHeaderValid = false;
 
 	YammerHttpClient() {
+		this.authHeaderValid = false;
 	}
 
 	YammerHttpClient(AuthorizedKeySet authorizedKeySet) {
@@ -35,6 +37,7 @@ class YammerHttpClient {
 		this.oAuthVerifier = authorizedKeySet.getoAuthVerifier();
 		this.token = authorizedKeySet.getTokenPair().getToken();
 		this.tokenSecret = authorizedKeySet.getTokenPair().getTokenSecret();
+		this.authHeaderValid = true;
 	}
 
 	private void addAuthorizationHeader(HttpUriRequest httpUriRequest) {
@@ -99,23 +102,21 @@ class YammerHttpClient {
 		return new StringBuilder(str1).append("=").append(str2).toString();
 	}
 
-	HttpResponse request(HttpUriRequest httpUriRequest)
-			 {
+	HttpResponse request(HttpUriRequest httpUriRequest) {
 		addAuthorizationHeader(httpUriRequest);
 		HttpResponse httpResponse = null;
 		try {
 			httpResponse = httpClient.execute(httpUriRequest);
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
-			throw new YammerException(e,httpResponse);
+			throw new YammerException(e, httpResponse);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new YammerException(e,httpResponse);
+			throw new YammerException(e, httpResponse);
 		}
 
 		return httpResponse;
 	}
-
 
 	void setAuthorizeElements(ConsumerKeyPair consumerKeyPair) {
 		AuthorizedKeySet authorizedKeySet = new AuthorizedKeySet();
