@@ -1,5 +1,6 @@
 *.project
 *.classpath
+*.settings
 *.settings/*
 *target/*
 *src/test/resources/hidden.properties
