@@ -62,7 +62,7 @@ public class OAuthTest {
 		Assert.assertEquals(HiddenProperties.getString("oAuthTest-consumerKeySecret"),
 				unAuthorizedKeySet.getConsumerKeyPair().getConsumerKeySecret());
 
-		System.out.println(yammer.oAuth.getAuthorizedUrl(unAuthorizedKeySet));
+		System.out.println("AuthorizedUrl : " + yammer.oAuth.getAuthorizedUrl(unAuthorizedKeySet));
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String oAuthVerifier = br.readLine();
