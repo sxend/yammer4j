@@ -1,164 +1,86 @@
 package yammer4j;
 
 import java.io.IOException;
-import java.util.Random;
+import java.util.Map;
+import java.util.logging.Logger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.Log4JLogger;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
 
-import yammer4j.exception.YammerException;
-import yammer4j.obj.AuthorizedKeySet;
-import yammer4j.obj.ConsumerKeyPair;
-import yammer4j.obj.TokenPair;
+final class YammerHttpClient {
 
-class YammerHttpClient {
+	private final HttpClient httpClient;
+	private static final String[] strArray = new String[] {};
 
-	private final HttpClient httpClient = new DefaultHttpClient();
-	private String consumerKey;
-	private String consumerKeySecret;
-	private String oAuthVerifier;
-	private String token;
-	private String tokenSecret;
-	private Random random = new Random(System.currentTimeMillis());
-	private boolean authHeaderValid = false;
-
-	YammerHttpClient() {
-		this.authHeaderValid = false;
+	static YammerHttpClient getClient() {
+		return new YammerHttpClient();
 	}
 
-	YammerHttpClient(AuthorizedKeySet authorizedKeySet) {
-		this.consumerKey = authorizedKeySet.getConsumerKeyPair()
-				.getConsumerKey();
-		this.consumerKeySecret = authorizedKeySet.getConsumerKeyPair()
-				.getConsumerKeySecret();
-		this.oAuthVerifier = authorizedKeySet.getoAuthVerifier();
-		this.token = authorizedKeySet.getTokenPair().getToken();
-		this.tokenSecret = authorizedKeySet.getTokenPair().getTokenSecret();
-		this.authHeaderValid = true;
+	private YammerHttpClient() {
+		httpClient = new DefaultHttpClient();
 	}
 
-	private void addAuthorizationHeader(HttpUriRequest httpUriRequest) {
-		httpUriRequest.addHeader(OAuth.AUTHORIZE_HEADER,
-				generateAuthHeaderValue());
+	public void get(String url, Map<String, String> httpParams) {
+		get(url, httpParams, null);
 	}
 
-	private String generateAuthHeaderValue() {
-		AuthHeaderAppender authHeaderAppender = new AuthHeaderAppender(
-				OAuth.AUTHORIZE_HEADER_PREFIX);
-		authHeaderAppender.append(getConsumerKeyHeader())
-				.append(getTokenHeader()).append(getSignatureMethodHeader())
-				.append(getTimeStampHeader()).append(getNonceHeader())
-				.append(getVerifierHeader()).append(getSignatureHeader());
-
-		return authHeaderAppender.getAuthHeaderValue();
-
+	public void post(String url, Map<String, String> httpParams) {
+		post(url, httpParams, null);
 	}
 
-	private String getConsumerKeyHeader() {
-		return strEqJoin(OAuth.OAUTH_CONSUMER_KEY, this.consumerKey);
+	public void get(String url, Map<String, String> httpParams, String token) {
+		HttpUriRequest request = new HttpGet(url);
+		execute(request, createRequestParam(httpParams), token);
 	}
 
-	private String getSignatureMethodHeader() {
-		return strEqJoin(OAuth.OAUTH_SIGNATURE_METHOD, "PLAINTEXT");
+	public void post(String url, Map<String, String> httpParams, String token) {
+		HttpUriRequest request = new HttpPost(url);
+		execute(request, createRequestParam(httpParams), token);
 	}
 
-	private String getNonceHeader() {
-		return strEqJoin(OAuth.OAUTH_NONCE, String.valueOf(random.nextInt()));
-	}
-
-	private String getSignatureHeader() {
-		StringBuilder signature = null;
-		if (this.consumerKeySecret != null) {
-			signature = new StringBuilder(this.consumerKeySecret).append("%26");
-			if (this.tokenSecret != null) {
-				signature.append(this.tokenSecret);
-			}
+	private void execute(HttpUriRequest request, HttpParams httpParams,
+			String token) {
+		request.setParams(httpParams);
+		if (token != null) {
+			request.addHeader("Authorization", "Bearer " + token);
 		}
-		return strEqJoin(OAuth.OAUTH_SIGNATURE, signature.toString());
-	}
 
-	private String getTimeStampHeader() {
-		return strEqJoin(OAuth.OAUTH_TIMESTAMP,
-				String.valueOf(System.currentTimeMillis()));
-	}
-
-	private String getVerifierHeader() {
-
-		return strEqJoin(OAuth.OAUTH_VERIFIER, this.oAuthVerifier);
-	}
-
-	private String getTokenHeader() {
-
-		return strEqJoin(OAuth.OAUTH_TOKEN, this.token);
-	}
-
-	private String strEqJoin(String str1, String str2) {
-		if (str1 == null || str2 == null) {
-			return null;
-		}
-		return new StringBuilder(str1).append("=").append(str2).toString();
-	}
-
-	HttpResponse request(HttpUriRequest httpUriRequest) {
-		addAuthorizationHeader(httpUriRequest);
 		HttpResponse httpResponse = null;
 		try {
-			httpResponse = httpClient.execute(httpUriRequest);
+			synchronized (httpClient) {
+
+				httpResponse = httpClient.execute(request);
+				// ココでレスポンスのオブジェクト作成
+				if (httpResponse != null
+						&& httpResponse.getEntity().isStreaming()) {
+					httpResponse.getEntity().getContent().close();
+				}
+			}
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
-			throw new YammerException(e, httpResponse);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new YammerException(e, httpResponse);
 		}
 
-		return httpResponse;
 	}
 
-	void setAuthorizeElements(ConsumerKeyPair consumerKeyPair) {
-		AuthorizedKeySet authorizedKeySet = new AuthorizedKeySet();
-		authorizedKeySet.setConsumerKeyPair(consumerKeyPair);
-		authorizedKeySet.setTokenPair(new TokenPair());
-		setAuthorizeElements(authorizedKeySet);
-	}
-
-	void setAuthorizeElements(AuthorizedKeySet authorizedKeySet) {
-		this.consumerKey = authorizedKeySet.getConsumerKeyPair()
-				.getConsumerKey();
-		this.consumerKeySecret = authorizedKeySet.getConsumerKeyPair()
-				.getConsumerKeySecret();
-		this.oAuthVerifier = authorizedKeySet.getoAuthVerifier();
-		this.token = authorizedKeySet.getTokenPair().getToken();
-		this.tokenSecret = authorizedKeySet.getTokenPair().getTokenSecret();
-	}
-
-	class AuthHeaderAppender {
-		StringBuilder sb;
-
-		boolean commaFlg = false;
-
-		AuthHeaderAppender append(String headerElement) {
-			if (headerElement != null) {
-				if (commaFlg) {
-					sb.append(",");
-				}
-				sb.append(headerElement);
-				commaFlg = true;
-			}
-			return this;
+	private HttpParams createRequestParam(Map<String, String> paramMap) {
+		HttpParams httpParams = new BasicHttpParams();
+		String[] keyArray = paramMap.keySet().toArray(strArray);
+		for (String key : keyArray) {
+			httpParams.setParameter(key, paramMap.get(key));
 		}
-
-		AuthHeaderAppender(String headerPrifix) {
-			sb = new StringBuilder(headerPrifix);
-		}
-
-		String getAuthHeaderValue() {
-			return sb.toString();
-		}
-
+		return httpParams;
 	}
 
 }

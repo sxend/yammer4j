@@ -1,104 +1,59 @@
 package yammer4j;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.ParseException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.util.EntityUtils;
 
-import yammer4j.exception.YammerException;
-import yammer4j.obj.AuthorizedKeySet;
-import yammer4j.obj.ConsumerKeyPair;
-import yammer4j.obj.TokenPair;
-import yammer4j.obj.UnAuthorizedKeySet;
-import yammer4j.util.RegexUtil;
+public class OAuthImpl implements OAuth {
 
-final class OAuthImpl extends AbstractYammerApi implements OAuth {
+	private YammerHttpClient client = YammerHttpClient.getClient();
 
-	protected OAuthImpl(YammerHttpClient client) {
-		super(client);
-	}
-
-	public  AuthorizedKeySet accessToken(String oAuthVerifier,
-			UnAuthorizedKeySet unAuthorizedKeySet) {
-		AuthorizedKeySet authorizedKeySet = new AuthorizedKeySet();
-		authorizedKeySet.setoAuthVerifier(oAuthVerifier);
-		authorizedKeySet.setConsumerKeyPair(unAuthorizedKeySet
-				.getConsumerKeyPair());
-		authorizedKeySet.setTokenPair(unAuthorizedKeySet.getTokenPair());
-		// 未認証なキーたちを詰める
-		client.setAuthorizeElements(authorizedKeySet);
-		HttpPost httpPost = new HttpPost(ACCESS_TOKEN_URL);
-		HttpResponse httpResponse = null;
-		String responseBody = null;
-		try {
-			httpResponse = client.request(httpPost);
-			responseBody = EntityUtils.toString(httpResponse.getEntity());
-		} catch (ParseException e) {
-			throw new YammerException(e);
-		} catch (IOException e) {
-			throw new YammerException(e);
-		}
-
-		// token変わってるので詰め直す
-		authorizedKeySet.getTokenPair().setToken(
-				RegexUtil.regexExtraction(OAUTH_TOKEN+"=([0-9a-zA-Z]*)",
-						responseBody));
-		authorizedKeySet.getTokenPair().setTokenSecret(
-				RegexUtil.regexExtraction(OAUTH_TOKEN_SECRET+"=([0-9a-zA-Z]*)",
-						responseBody));
-		client.setAuthorizeElements(authorizedKeySet);
-		//今後は認証済みのauthorizedKeySetやつを使う
-		return authorizedKeySet;
-	}
-
-	public  UnAuthorizedKeySet requestToken(ConsumerKeyPair consumerKeyPair) {
-		client.setAuthorizeElements(consumerKeyPair);
-		HttpPost httpPost = new HttpPost(REQUEST_TOKEN_URL);
-		HttpResponse httpResponse = null;
-		String responseBody = null;
-		try {
-			httpResponse = client.request(httpPost);
-			responseBody = EntityUtils.toString(httpResponse.getEntity());
-		} catch (ParseException e) {
-			throw new YammerException(e);
-		} catch (IOException e) {
-			throw new YammerException(e);
-		}
-		UnAuthorizedKeySet unAuthorizedKeySet = new UnAuthorizedKeySet();
-		unAuthorizedKeySet.setConsumerKeyPair(consumerKeyPair);
-		TokenPair tokenPair = new TokenPair();
-		tokenPair.setToken(RegexUtil.regexExtraction(
-				OAUTH_TOKEN+"=([0-9a-zA-Z]*)", responseBody));
-		tokenPair.setTokenSecret(RegexUtil.regexExtraction(
-				OAUTH_TOKEN_SECRET+"=([0-9a-zA-Z]*)", responseBody));
-		unAuthorizedKeySet.setTokenPair(tokenPair);
-
-		return unAuthorizedKeySet;
-
-	}
-
-	public  String getAuthorizedUrl(UnAuthorizedKeySet unAuthorizedKeySet) {
-		return AUTHORIZE_URL + "?" + OAUTH_TOKEN + "="
-				+ unAuthorizedKeySet.getTokenPair().getToken();
-	}
-
-	@Override
-	protected OAuthResponse parsingObject(HttpResponse httpResponse) {
-		OAuthResponse oAuthResponse = new OAuthResponse(httpResponse);
-		return oAuthResponse;
-	}
-
-	public OAuthResponse getTokens() {
-		// TODO 自動生成されたメソッド・スタブ
+	public String getRedirectUrl(String clientId, String callBackUrl) {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("client_id", clientId);
+		param.put("redirect_uri", callBackUrl);
+		System.out.println(client);
+		client.get("https://www.yammer.com/dialog/oauth",param);
 		return null;
 	}
 
-	public OAuthResponse postTokens() {
-		// TODO 自動生成されたメソッド・スタブ
+	public AccessToken getToken(String clientId, String callBackUrl) {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("client_id", clientId);
+		param.put("redirect_uri", callBackUrl);
+		param.put("response_type", "token");
+		client.get("https://www.yammer.com/dialog/oauth", param);
 		return null;
 	}
 
+	public AccessToken getToken(String clientId, String clientSecret,
+			String code) {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("client_id", clientId);
+		param.put("client_secret", clientSecret);
+		param.put("code", code);
+		client.get("https://www.yammer.com/oauth2/access_token.json", param );
+		return null;
+	}
+
+	@Deprecated
+	public UnAuthorisedToken getPreAuthorizedTokenForAdmin(String userId,
+			String consumerKey) {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("user_id", userId);
+		param.put("consumer_key", consumerKey);
+		client.post("https://www.yammer.com/api/v1/oauth.json", param);
+		return null;
+	}
+	@Deprecated
+	public AccessToken getAuthorizedToken(String userId,
+			String consumerKey) {
+		Map<String, String> param = new HashMap<String, String>();
+		param.put("user_id", userId);
+		param.put("consumer_key", consumerKey);
+		System.out.println(client);
+		client.get("https://www.yammer.com/api/v1/oauth/tokens.json", param);
+		return null;
+	}
 
 }
