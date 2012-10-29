@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.Log4JLogger;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -24,6 +25,9 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.message.BasicHeaderValueFormatter;
+import org.apache.http.message.BasicHeaderValueParser;
+import org.apache.http.message.HeaderValueParser;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -121,7 +125,7 @@ final class YammerHttpClient {
 
 	private void validateStatusCode(HttpResponse httpResponse){
 		switch (httpResponse.getStatusLine().getStatusCode()) {
-		case HttpStatus.SC_BAD_REQUEST :
+		case HttpStatus.SC_BAD_REQUEST:
 			throw new BadRequestException(httpResponse.getStatusLine().getReasonPhrase());
 		case HttpStatus.SC_UNAUTHORIZED :
 			throw new UnAuthorizedException(httpResponse.getStatusLine().getReasonPhrase());
