@@ -6,13 +6,12 @@ import java.util.Map;
 
 public class OAuthImpl implements OAuth {
 
-	private YammerHttpClient client = YammerHttpClient.getClient();
+	private YammerHttpClient client = YammerHttpClient.getInstance();
 
 	public String getRedirectUrl(String clientId, String callBackUrl) {
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("client_id", clientId);
 		param.put("redirect_uri", callBackUrl);
-		System.out.println(client);
 		client.get("https://www.yammer.com/dialog/oauth",param);
 		return null;
 	}
@@ -51,7 +50,6 @@ public class OAuthImpl implements OAuth {
 		Map<String, String> param = new HashMap<String, String>();
 		param.put("user_id", userId);
 		param.put("consumer_key", consumerKey);
-		System.out.println(client);
 		client.get("https://www.yammer.com/api/v1/oauth/tokens.json", param);
 		return null;
 	}

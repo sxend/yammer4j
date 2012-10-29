@@ -1,86 +1,132 @@
 package yammer4j;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.Log4JLogger;
-import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.DefaultedHttpContext;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 final class YammerHttpClient {
 
+	private static final String[] STR_ARRAY;
+	private static final String USER_AGENT;
+	private static final YammerHttpClient DEFAULT_CLIENT;
+	private final Log log;
 	private final HttpClient httpClient;
-	private static final String[] strArray = new String[] {};
 
-	static YammerHttpClient getClient() {
-		return new YammerHttpClient();
+	static {
+		STR_ARRAY = new String[] {};
+		USER_AGENT = "Yammer4j/HttpClient0.0.1";
+		DEFAULT_CLIENT = new YammerHttpClient();
+
 	}
 
 	private YammerHttpClient() {
-		httpClient = new DefaultHttpClient();
+		HttpParams params = new BasicHttpParams();
+		HttpConnectionParams.setSoTimeout(params, 3000);
+		HttpConnectionParams.setConnectionTimeout(params, 3000);
+		HttpConnectionParams.setTcpNoDelay(params, true);
+		HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+		HttpProtocolParams.setHttpElementCharset(params, HTTP.UTF_8);
+		HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+		HttpProtocolParams.setUserAgent(params, USER_AGENT);
+
+		SchemeRegistry schreg = new SchemeRegistry();
+		schreg.register(new Scheme(HttpHost.DEFAULT_SCHEME_NAME, 80,
+				PlainSocketFactory.getSocketFactory()));
+		schreg.register(new Scheme("https", 443, SSLSocketFactory
+				.getSocketFactory()));
+		httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(
+				schreg), params);
+		log = LogFactory.getLog(YammerHttpClient.class);
 	}
 
-	public void get(String url, Map<String, String> httpParams) {
-		get(url, httpParams, null);
+	static YammerHttpClient getNewInstance() {
+		return new YammerHttpClient();
 	}
 
-	public void post(String url, Map<String, String> httpParams) {
-		post(url, httpParams, null);
+	static YammerHttpClient getInstance() {
+		return DEFAULT_CLIENT;
 	}
 
-	public void get(String url, Map<String, String> httpParams, String token) {
-		HttpUriRequest request = new HttpGet(url);
-		execute(request, createRequestParam(httpParams), token);
+	public void get(String apiUrl, Map<String, String> queryParams) {
+		get(apiUrl, queryParams, null);
 	}
 
-	public void post(String url, Map<String, String> httpParams, String token) {
-		HttpUriRequest request = new HttpPost(url);
-		execute(request, createRequestParam(httpParams), token);
+	public void post(String apiUrl, Map<String, String> queryParams) {
+		post(apiUrl, queryParams, null);
 	}
 
-	private void execute(HttpUriRequest request, HttpParams httpParams,
+	public void get(String apiUrl, Map<String, String> queryParams, String token) {
+		HttpUriRequest request = new HttpGet(createRequestUrl(apiUrl,
+				queryParams));
+		execute(request, queryParams, token);
+	}
+
+	public void post(String apiUrl, Map<String, String> queryParams,
 			String token) {
-		request.setParams(httpParams);
+		HttpUriRequest request = new HttpPost(createRequestUrl(apiUrl,
+				queryParams));
+		execute(request, queryParams, token);
+	}
+
+	private void execute(HttpUriRequest request,
+			Map<String, String> queryParams, String token) {
+
 		if (token != null) {
 			request.addHeader("Authorization", "Bearer " + token);
 		}
 
-		HttpResponse httpResponse = null;
 		try {
-			synchronized (httpClient) {
+			HttpResponse httpResponse = httpClient.execute(request);
+			EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
 
-				httpResponse = httpClient.execute(request);
-				// ココでレスポンスのオブジェクト作成
-				if (httpResponse != null
-						&& httpResponse.getEntity().isStreaming()) {
-					httpResponse.getEntity().getContent().close();
-				}
-			}
+
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
-
 	}
 
-	private HttpParams createRequestParam(Map<String, String> paramMap) {
-		HttpParams httpParams = new BasicHttpParams();
-		String[] keyArray = paramMap.keySet().toArray(strArray);
+	private String createRequestUrl(String apiUrl,
+			Map<String, String> queryParams) {
+
+		StringBuilder sb = new StringBuilder(apiUrl).append("?");
+		String[] keyArray = queryParams.keySet().toArray(STR_ARRAY);
 		for (String key : keyArray) {
-			httpParams.setParameter(key, paramMap.get(key));
+			sb.append(key).append("=").append(queryParams.get(key)).append("&");
 		}
-		return httpParams;
+		sb.deleteCharAt(sb.length() - 1);
+
+		return sb.toString();
 	}
 
 }
