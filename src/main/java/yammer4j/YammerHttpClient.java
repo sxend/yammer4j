@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -33,12 +34,14 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 
+import yammer4j.exception.BadRequestException;
+import yammer4j.exception.UnAuthorizedException;
+
 final class YammerHttpClient {
 
 	private static final String[] STR_ARRAY;
 	private static final String USER_AGENT;
 	private static final YammerHttpClient DEFAULT_CLIENT;
-	private final Log log;
 	private final HttpClient httpClient;
 
 	static {
@@ -65,7 +68,7 @@ final class YammerHttpClient {
 				.getSocketFactory()));
 		httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(
 				schreg), params);
-		log = LogFactory.getLog(YammerHttpClient.class);
+
 	}
 
 	static YammerHttpClient getNewInstance() {
@@ -107,12 +110,23 @@ final class YammerHttpClient {
 		try {
 			HttpResponse httpResponse = httpClient.execute(request);
 			EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
-
+			validateStatusCode(httpResponse);
 
 		} catch (ClientProtocolException e) {
-			log.error(e.getMessage());
+			e.printStackTrace();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private void validateStatusCode(HttpResponse httpResponse){
+		switch (httpResponse.getStatusLine().getStatusCode()) {
+		case HttpStatus.SC_BAD_REQUEST :
+			throw new BadRequestException(httpResponse.getStatusLine().getReasonPhrase());
+		case HttpStatus.SC_UNAUTHORIZED :
+			throw new UnAuthorizedException(httpResponse.getStatusLine().getReasonPhrase());
+		default:
+			break;
 		}
 	}
 
