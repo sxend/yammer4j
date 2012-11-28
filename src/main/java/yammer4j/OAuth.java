@@ -1,15 +1,11 @@
 package yammer4j;
 
+import yammer4j_old.AccessToken;
+
 public interface OAuth {
 
-	String getRedirectUrl(String clientId, String callBackUrl);
-
-	AccessToken getToken(String clientId, String callBackUrl);
-
-	AccessToken getToken(String clientId, String clientSecret, String code);
-
-	UnAuthorisedToken getPreAuthorizedTokenForAdmin(String userId, String consumerKey);
-
-	AccessToken getAuthorizedToken(String userId, String consumerKey);
+    public AuthorizationUrl getAuthorizationUrl(String clientId, String redirectUrl);
+    public AccessToken getAccessToken(String clientId, String registrationUrl);
+    public Object getAccessToken(String clientId, String clientSecret, String authorizationCode);
 
 }
