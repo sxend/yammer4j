@@ -7,5 +7,6 @@ package yammer4j;
  * Time: 20:33
  * To change this template use File | Settings | File Templates.
  */
-public interface AuthorizationUrl {
+public class AuthorizationUrl {
+
 }

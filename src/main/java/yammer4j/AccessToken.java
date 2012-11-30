@@ -7,5 +7,5 @@ package yammer4j;
  * Time: 20:21
  * To change this template use File | Settings | File Templates.
  */
-public interface AccessToken {
+public class AccessToken {
 }

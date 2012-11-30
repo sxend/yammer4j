@@ -1,4 +1,6 @@
-package yammer4j;
+package yammer4j.opengraph;
+
+import yammer4j.AccessToken;
 
 /**
  * Created with IntelliJ IDEA.
@@ -8,4 +10,7 @@ package yammer4j;
  * To change this template use File | Settings | File Templates.
  */
 public interface OpenGraph {
+
+    public Boolean submitActivity(AccessToken accessToken,Activity... activities);
+
 }
