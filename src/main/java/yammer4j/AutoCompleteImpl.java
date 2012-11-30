@@ -7,8 +7,8 @@ package yammer4j;
  * Time: 22:58
  * To change this template use File | Settings | File Templates.
  */
-public class AutoCompleteImpl {
-    private final  YammerHttpClient yammerHttpClient;
+public class AutoCompleteImpl implements AutoComplete {
+    private final YammerHttpClient yammerHttpClient;
 
     public AutoCompleteImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
