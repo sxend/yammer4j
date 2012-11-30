@@ -46,7 +46,7 @@ public class Main {
                 .configure(SerializationConfig.Feature.WRITE_EMPTY_JSON_ARRAYS, false)
                 .configure(SerializationConfig.Feature.WRITE_NULL_PROPERTIES,false);
          try{
-            activities.length > 1 ?om.writeValueAsString(activities) : om.writeValueAsString(activities[0]);
+//            activities.length > 1 ?om.writeValueAsString(activities) : om.writeValueAsString(activities[0]);
          }catch (Exception e){}
     }
 

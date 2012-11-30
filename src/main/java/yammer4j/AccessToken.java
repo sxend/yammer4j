@@ -7,5 +7,12 @@ package yammer4j;
  * Time: 20:21
  * To change this template use File | Settings | File Templates.
  */
-public class AccessToken {
+public final class AccessToken {
+    public AccessToken(String token){
+        this.token = token;
+    }
+    private final String token;
+    public String getToken(){
+        return this.token;
+    }
 }
