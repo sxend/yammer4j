@@ -4,6 +4,6 @@
 *.settings/*
 *target/*
 *src/test/resources/hidden.properties
-*src/main/java/yammer4j_old
+*src/main/java/yammer4j_old*
 *.idea
 yammer4j.iml
