@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 22:59
  * To change this template use File | Settings | File Templates.
  */
-public class RelationshipsImpl implements Relationships {
+class RelationshipsImpl implements Relationships {
     private final YammerHttpClient yammerHttpClient;
-    public RelationshipsImpl(YammerHttpClient yammerHttpClient) {
+
+    RelationshipsImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

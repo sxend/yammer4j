@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 22:59
  * To change this template use File | Settings | File Templates.
  */
-public class NetWorksImpl implements Networks {
+class NetWorksImpl implements Networks {
     private final YammerHttpClient yammerHttpClient;
-    public NetWorksImpl(YammerHttpClient yammerHttpClient) {
+
+    NetWorksImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

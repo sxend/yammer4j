@@ -22,7 +22,7 @@ import org.apache.http.protocol.HTTP;
  * Time: 21:55
  * To change this template use File | Settings | File Templates.
  */
-public class YammerHttpClient {
+class YammerHttpClient {
     private static final String USER_AGENT;
     private final HttpClient httpClient;
     private AccessToken accessToken = null;
@@ -41,25 +41,34 @@ public class YammerHttpClient {
         HttpProtocolParams.setHttpElementCharset(params, HTTP.UTF_8);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpProtocolParams.setUserAgent(params, USER_AGENT);
-
         SchemeRegistry schemeRegistry = new SchemeRegistry();
-        schemeRegistry.register(new Scheme(HttpHost.DEFAULT_SCHEME_NAME, 80,
-                PlainSocketFactory.getSocketFactory()));
-        schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory
-                .getSocketFactory()));
-        httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(
-                schemeRegistry), params);
-
+        schemeRegistry.register(new Scheme(HttpHost.DEFAULT_SCHEME_NAME, 80, PlainSocketFactory.getSocketFactory()));
+        schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
+        httpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(schemeRegistry), params);
     }
 
     static YammerHttpClient getInstance() {
         return new YammerHttpClient();
     }
 
-    void setAccessToken(AccessToken accessToken){
+    void setAccessToken(AccessToken accessToken) {
         this.accessToken = accessToken;
     }
-    void setResponseType(ResponseType responseType){
+
+    void setResponseType(ResponseType responseType) {
         this.responseType = responseType;
     }
+
+    void get(String url, Boolean authFlg) {
+    }
+
+    void post() {
+    }
+
+    void delete() {
+    }
+
+    void put() {
+    }
+
 }

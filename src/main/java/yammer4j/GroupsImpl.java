@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 22:58
  * To change this template use File | Settings | File Templates.
  */
-public class GroupsImpl implements Groups {
+class GroupsImpl implements Groups {
     private final YammerHttpClient yammerHttpClient;
-    public GroupsImpl(YammerHttpClient yammerHttpClient) {
+
+    GroupsImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

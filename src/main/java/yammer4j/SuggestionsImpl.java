@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 23:00
  * To change this template use File | Settings | File Templates.
  */
-public class SuggestionsImpl implements Suggestions {
+class SuggestionsImpl implements Suggestions {
     private final YammerHttpClient yammerHttpClient;
-    public SuggestionsImpl(YammerHttpClient yammerHttpClient) {
+
+    SuggestionsImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

@@ -7,6 +7,6 @@ package yammer4j;
  * Time: 22:28
  * To change this template use File | Settings | File Templates.
  */
-public class YammerException extends Exception {
+public class YammerException extends RuntimeException {
 
 }

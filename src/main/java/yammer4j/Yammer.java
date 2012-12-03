@@ -1,23 +1,43 @@
 package yammer4j;
 
-import yammer4j.opengraph.OpenGraph;
+/**
+ * Created with IntelliJ IDEA.
+ * User: A12184
+ * Date: 12/11/30
+ * Time: 22:32
+ * To change this template use File | Settings | File Templates.
+ */
+public class Yammer {
+    private Yammer() {
+    }
 
-interface Yammer
-//        extends Autocomplete,
-//        Groups,
-//        Invitations,
-//        Messages,
-//        Networks,
-//        Notifications,
-//        OAuth,
-//        OAuthImpersonation,
-//        OpenGraph,
-//        Relationships,
-//        Search,
-//        Subscriptions,
-//        Suggestions,
-//        Users
-{
-       public Yammer setAccessToken(AccessToken accessToken);
+    public static Yammer getInstance() {
+        return new Yammer();
+    }
+
+    private final YammerHttpClient yammerHttpClient = YammerHttpClient.getInstance();
+
+    public final AutoComplete autoComplete = new AutoCompleteImpl(yammerHttpClient);
+    public final Groups groups = new GroupsImpl(yammerHttpClient);
+    public final Invitations invitations = new InvitationsImpl(yammerHttpClient);
+    public final Messages messages = new MessagesImpl(yammerHttpClient);
+    public final Networks networks = new NetWorksImpl(yammerHttpClient);
+    public final Notifications notifications = new NotificationsImpl(yammerHttpClient);
+    public final OAuth oAuth = new OAuthImpl(yammerHttpClient);
+    public final OAuthImpersonation oAuthImpersonation = new OAuthImpersonationImpl(yammerHttpClient);
+    public final Relationships relationships = new RelationshipsImpl(yammerHttpClient);
+    public final Search search = new SearchImpl(yammerHttpClient);
+    public final Subscriptions subscriptions = new SubscriptionsImpl(yammerHttpClient);
+    public final Suggestions suggestions = new SuggestionsImpl(yammerHttpClient);
+    public final Users users = new UsersImpl(yammerHttpClient);
+
+    public Yammer setAccessToken(AccessToken accessToken) {
+        yammerHttpClient.setAccessToken(accessToken);
+        return this;
+    }
+
+    public Yammer setResponseType(ResponseType responseType) {
+        yammerHttpClient.setResponseType(responseType);
+        return this;
+    }
 }
-

@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 22:59
  * To change this template use File | Settings | File Templates.
  */
-public class NotificationsImpl implements Notifications {
+class NotificationsImpl implements Notifications {
     private final YammerHttpClient yammerHttpClient;
-    public NotificationsImpl(YammerHttpClient yammerHttpClient) {
+
+    NotificationsImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 23:00
  * To change this template use File | Settings | File Templates.
  */
-public class SubscriptionsImpl implements Subscriptions {
+class SubscriptionsImpl implements Subscriptions {
     private final YammerHttpClient yammerHttpClient;
-    public SubscriptionsImpl(YammerHttpClient yammerHttpClient) {
+
+    SubscriptionsImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

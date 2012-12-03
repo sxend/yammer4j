@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 22:59
  * To change this template use File | Settings | File Templates.
  */
-public class SearchImpl implements Search {
+class SearchImpl implements Search {
     private final YammerHttpClient yammerHttpClient;
-    public SearchImpl(YammerHttpClient yammerHttpClient) {
+
+    SearchImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

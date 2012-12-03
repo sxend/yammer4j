@@ -7,9 +7,10 @@ package yammer4j;
  * Time: 22:59
  * To change this template use File | Settings | File Templates.
  */
-public class InvitationsImpl implements Invitations {
+class InvitationsImpl implements Invitations {
     private final YammerHttpClient yammerHttpClient;
-    public InvitationsImpl(YammerHttpClient yammerHttpClient) {
+
+    InvitationsImpl(YammerHttpClient yammerHttpClient) {
         this.yammerHttpClient = yammerHttpClient;
     }
 }

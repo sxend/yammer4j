@@ -8,7 +8,10 @@ package yammer4j;
  * To change this template use File | Settings | File Templates.
  */
 @Deprecated
-public class OAuthImpersonationImpl implements OAuthImpersonation {
-    public OAuthImpersonationImpl(YammerHttpClient yammerHttpClient) {
+class OAuthImpersonationImpl implements OAuthImpersonation {
+    private final YammerHttpClient yammerHttpClient;
+
+    OAuthImpersonationImpl(YammerHttpClient yammerHttpClient) {
+        this.yammerHttpClient = yammerHttpClient;
     }
 }

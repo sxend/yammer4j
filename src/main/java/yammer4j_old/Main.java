@@ -1,8 +1,5 @@
 package yammer4j_old;
 
-import org.codehaus.jackson.map.MapperConfig;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import yammer4j.opengraph.Activity;
 import yammer4j.opengraph.Object;
 import yammer4j.opengraph.User;
@@ -40,14 +37,17 @@ public class Main {
 
         new Main().hoge(new Activity[]{activity});
     }
-    public void hoge(Activity... activities){
-        ObjectMapper om = new ObjectMapper()
-                .configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES, false)
-                .configure(SerializationConfig.Feature.WRITE_EMPTY_JSON_ARRAYS, false)
-                .configure(SerializationConfig.Feature.WRITE_NULL_PROPERTIES,false);
-         try{
+
+    public void hoge(Activity... activities) {
+
+        try {
 //            activities.length > 1 ?om.writeValueAsString(activities) : om.writeValueAsString(activities[0]);
-         }catch (Exception e){}
+        } catch (Exception e) {
+        }
+    }
+
+    public void fuga() {
+        yammer4j.Yammer yammer = yammer4j.Yammer.getInstance();
     }
 
 }
