@@ -1,6 +1,8 @@
 package yammer4j;
 
 
+import yammer4j.response.AccessToken;
+
 public final class Yammer {
     private Yammer() {
     }
@@ -25,13 +27,11 @@ public final class Yammer {
     public final Suggestions suggestions = new SuggestionsImpl(yammerHttpClient);
     public final Users users = new UsersImpl(yammerHttpClient);
 
-    public Yammer setAccessToken(AccessToken accessToken) {
+    public void setAccessToken(AccessToken accessToken) {
         yammerHttpClient.setAccessToken(accessToken);
-        return this;
     }
 
-    public Yammer setResponseType(ResponseType responseType) {
+    public void setResponseType(ResponseType responseType) {
         yammerHttpClient.setResponseType(responseType);
-        return this;
     }
 }

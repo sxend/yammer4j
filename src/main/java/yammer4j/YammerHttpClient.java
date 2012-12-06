@@ -18,6 +18,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
+import yammer4j.exception.YammerException;
+import yammer4j.response.AccessToken;
 
 import java.io.IOException;
 
@@ -45,7 +47,6 @@ class YammerHttpClient {
         HttpProtocolParams.setHttpElementCharset(params, HTTP.UTF_8);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpClientParams.setRedirecting(params, false);
-        HttpProtocolParams.setUserAgent(params, USER_AGENT);
 
         httpClient = (HttpClient) defaultHttpClient;
 
@@ -77,7 +78,11 @@ class YammerHttpClient {
         } catch (IOException e) {
             throw new YammerException(e);
         }
-        return new YammerApiResponse(response);
+        return createYammerApiResponse(response);
+    }
+
+    private YammerApiResponse createYammerApiResponse(HttpResponse response) throws YammerException {
+           return new YammerApiResponse(response);
     }
 
     private void setHeader(HttpUriRequest request) {
@@ -86,8 +91,7 @@ class YammerHttpClient {
         }
         request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT);
 //        request.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip,deflate");
-        request.setHeader(HttpHeaders.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        request.setHeader(HttpHeaders.ACCEPT_CHARSET, "Shift_JIS,utf-8;q=0.7,*;q=0.3");
+        request.setHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8;q=0.7,*;q=0.3");
         request.setHeader(HttpHeaders.HOST, "www.yammer.com");
     }
 

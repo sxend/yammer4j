@@ -4,6 +4,7 @@ import org.apache.http.*;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import yammer4j.exception.YammerException;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -22,7 +23,7 @@ class YammerApiResponse {
         try {
             this.entityString = EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
         } catch (IOException e) {
-            throw new YammerException(httpResponse, e);
+            throw new YammerException(e);
         }
     }
 
