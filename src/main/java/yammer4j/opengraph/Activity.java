@@ -1,12 +1,6 @@
 package yammer4j.opengraph;
 
-/**
- * Created with IntelliJ IDEA.
- * User: A12184
- * Date: 12/11/29
- * Time: 20:25
- * To change this template use File | Settings | File Templates.
- */
+
 public class Activity {
 
     private User actor;

@@ -1,13 +1,7 @@
 package yammer4j;
 
-/**
- * Created with IntelliJ IDEA.
- * User: A12184
- * Date: 12/11/30
- * Time: 22:32
- * To change this template use File | Settings | File Templates.
- */
-public class Yammer {
+
+public final class Yammer {
     private Yammer() {
     }
 
@@ -23,7 +17,7 @@ public class Yammer {
     public final Messages messages = new MessagesImpl(yammerHttpClient);
     public final Networks networks = new NetWorksImpl(yammerHttpClient);
     public final Notifications notifications = new NotificationsImpl(yammerHttpClient);
-    public final OAuth oAuth = new OAuthImpl(yammerHttpClient);
+    public final Auth auth = new AuthImpl(yammerHttpClient);
     public final OAuthImpersonation oAuthImpersonation = new OAuthImpersonationImpl(yammerHttpClient);
     public final Relationships relationships = new RelationshipsImpl(yammerHttpClient);
     public final Search search = new SearchImpl(yammerHttpClient);

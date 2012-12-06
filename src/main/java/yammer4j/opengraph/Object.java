@@ -1,12 +1,6 @@
 package yammer4j.opengraph;
 
-/**
- * Created with IntelliJ IDEA.
- * User: A12184
- * Date: 12/11/29
- * Time: 20:24
- * To change this template use File | Settings | File Templates.
- */
+
 public class Object {
 
     private String url;
@@ -14,16 +8,47 @@ public class Object {
     private String title;
     private String image;
     private String description;
-    public String getUrl(){return this.url;}
-    public String getType(){return this.type;}
-    public String getTitle(){return this.title;}
-    public String getImage(){return this.image;}
-    public String getDescription(){return this.description;}
-    public void setUrl(String url){this.url = url;}
-    public void setType(ObjectType type){this.type = type == null ? null:type.getType();}
-    public void setTitle(String title){this.title = title;}
-    public void setImage(String image){this.image = image;}
-    public void setDescription(String description){this.description = description;}
+
+    public String getUrl() {
+        return this.url;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getImage() {
+        return this.image;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setType(ObjectType type) {
+        this.type = type == null ? null : type.getType();
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public static enum ObjectType {
         PAGE("page"),
         PLACE("place"),
@@ -38,10 +63,12 @@ public class Object {
         VIDEO("video"),
         COMPANY("company");
         private String type;
-        private ObjectType(String type){
+
+        private ObjectType(String type) {
             this.type = type;
         }
-        public String getType(){
+
+        public String getType() {
             return this.type;
         }
     }
