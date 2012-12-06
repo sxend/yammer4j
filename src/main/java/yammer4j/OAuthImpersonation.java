@@ -1,5 +1,7 @@
 package yammer4j;
 
-@Deprecated
+/**
+ * @deprecated
+ */
 public interface OAuthImpersonation {
 }

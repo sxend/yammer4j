@@ -47,7 +47,6 @@ class YammerHttpClient {
         HttpClientParams.setRedirecting(params, false);
         HttpProtocolParams.setUserAgent(params, USER_AGENT);
 
-
         httpClient = (HttpClient) defaultHttpClient;
 
     }
@@ -68,7 +67,7 @@ class YammerHttpClient {
         this.responseType = responseType == null ? ResponseType.JSON : responseType;
     }
 
-    YammerApiResponse execute(ApiQuery query) {
+    YammerApiResponse execute(ApiQuery query) throws YammerException {
         HttpUriRequest request = generateRequest(query, responseType);
         setHeader(request);
 
@@ -76,7 +75,7 @@ class YammerHttpClient {
         try {
             response = this.httpClient.execute(request);
         } catch (IOException e) {
-            throw new YammerException(e.getMessage());
+            throw new YammerException(e);
         }
         return new YammerApiResponse(response);
     }

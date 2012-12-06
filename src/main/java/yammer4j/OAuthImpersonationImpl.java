@@ -1,6 +1,8 @@
 package yammer4j;
 
-@Deprecated
+/**
+ * @deprecated
+ */
 class OAuthImpersonationImpl implements OAuthImpersonation {
     private final YammerHttpClient yammerHttpClient;
 

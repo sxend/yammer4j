@@ -17,12 +17,12 @@ class YammerApiResponse {
     private final HttpResponse httpResponse;
     private final String entityString;
 
-    YammerApiResponse(HttpResponse httpResponse) {
+    YammerApiResponse(HttpResponse httpResponse) throws YammerException {
         this.httpResponse = httpResponse;
         try {
-            this.entityString = EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);//TODO gzip圧縮比対応
+            this.entityString = EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
         } catch (IOException e) {
-            throw new YammerException(e.getMessage());
+            throw new YammerException(httpResponse, e);
         }
     }
 
@@ -73,14 +73,5 @@ class YammerApiResponse {
     Header[] getAllHeaders() {
         return httpResponse.getAllHeaders();
     }
-
-    private boolean isGZipHttpResponse(HttpResponse httpResponse) {
-        Header header = httpResponse.getEntity().getContentEncoding();
-        if (header == null) {
-            return false;
-        }
-        return header.getValue() != null && header.getValue().equals("gzip");
-    }
-
 
 }
