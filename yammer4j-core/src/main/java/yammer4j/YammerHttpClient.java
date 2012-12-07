@@ -68,7 +68,7 @@ class YammerHttpClient {
         this.responseType = responseType == null ? ResponseType.JSON : responseType;
     }
 
-    YammerApiResponse execute(ApiQuery query) throws YammerException {
+    YammerHttpResponse execute(ApiQuery query) throws YammerException {
         HttpUriRequest request = generateRequest(query, responseType);
         setHeader(request);
 
@@ -81,8 +81,8 @@ class YammerHttpClient {
         return createYammerApiResponse(response);
     }
 
-    private YammerApiResponse createYammerApiResponse(HttpResponse response) throws YammerException {
-           return new YammerApiResponse(response);
+    private YammerHttpResponse createYammerApiResponse(HttpResponse response) throws YammerException {
+           return new YammerHttpResponse(response);
     }
 
     private void setHeader(HttpUriRequest request) {
@@ -90,7 +90,7 @@ class YammerHttpClient {
             request.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken.getToken());
         }
         request.setHeader(HttpHeaders.USER_AGENT, USER_AGENT);
-//        request.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip,deflate");
+        request.setHeader(HttpHeaders.ACCEPT_ENCODING, "gzip,deflate");
         request.setHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8;q=0.7,*;q=0.3");
         request.setHeader(HttpHeaders.HOST, "www.yammer.com");
     }

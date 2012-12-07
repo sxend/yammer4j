@@ -6,7 +6,7 @@ import yammer4j.response.Error;
 
 public interface Auth {
 
-    public Response<AuthorizationUrl, Error> getAuthorizationUrl(String clientId, String redirectUrl, boolean tokenType) throws YammerException;
+    public String getAuthorizationUrl(String clientId, String redirectUrl, boolean tokenType);
 
     public Response<AccessToken,Error> getAccessToken(String clientId, String clientSecret, String code) throws YammerException;
 
