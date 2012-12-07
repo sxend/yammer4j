@@ -6,4 +6,4 @@
 *src/test/resources/hidden.properties
 *.idea
 *stc/test/*
-yammer4j.iml
+*.iml
