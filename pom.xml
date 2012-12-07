@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>yammer4j</groupId>
     <artifactId>yammer4j</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <build>
         <plugins>
@@ -18,13 +18,17 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
-    <modules>
-        <module>yammer4j-core</module>
-        <module>yammer4j-interface</module>
-        <module>yammer4j-model</module>
-        <module>yammer4j-util</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
+            <version>4.1.2</version>
+        </dependency>
+    </dependencies>
 </project>
