@@ -18,48 +18,17 @@ import java.util.zip.GZIPInputStream;
 class YammerHttpResponse {
     private final int statusCode;
     private final String entityString;
+    private final Exception exception;
 
-
-    YammerHttpResponse(HttpResponse httpResponse) throws YammerException {
-        this.statusCode = httpResponse.getStatusLine().getStatusCode();
-        try {
-//            this.entityString = EntityUtils.toString(httpResponse.getEntity(), HTTP.UTF_8);
-            this.entityString = readEntityAsString(httpResponse.getEntity());
-        } catch (IOException e) {
-            throw new YammerException(e);
-        }
-
+    YammerHttpResponse(int statusCode ,String entityString){
+        this.statusCode = statusCode;
+        this.entityString = entityString;
+        this.exception = null;
     }
-    private String readEntityAsString(HttpEntity entity)throws IOException{
-        if (entity == null) {
-            throw new IOException("HTTP entity may not be null");
-        }
-        InputStream instream = entity.getContent();
-        if (instream == null) {
-            return null;
-        }
-        try {
-            if (entity.getContentLength() > Integer.MAX_VALUE) {
-                throw new IOException("HTTP entity too large");
-            }
-            int i = (int)entity.getContentLength();
-            if (i < 0) {
-                i = 4096;
-            }
-            if(entity.getContentEncoding() != null && entity.getContentEncoding().getValue().equals("gzip")){
-                 instream = new GZIPInputStream(instream);
-            }
-            Reader reader = new InputStreamReader(instream, HTTP.UTF_8);
-            CharArrayBuffer buffer = new CharArrayBuffer(i);
-            char[] tmp = new char[1024];
-            int l;
-            while((l = reader.read(tmp)) != -1) {
-                buffer.append(tmp, 0, l);
-            }
-            return buffer.toString();
-        } finally {
-            instream.close();
-        }
+    YammerHttpResponse(Exception exception){
+        this.statusCode = -1;
+        this.entityString = exception.getMessage();
+        this.exception = exception;
     }
 
     int getStatusCode() {
@@ -68,5 +37,9 @@ class YammerHttpResponse {
     String getEntityString() {
         return this.entityString;
     }
+    Exception getException(){
+        return this.exception;
+    }
+
 
 }

@@ -16,12 +16,12 @@ class ApiQuery {
 
     private final Method method;
     private final String url;
-    private final List<NameValuePair> nameValuePairs;
+    private final List<NameValuePair> params;
 
-    ApiQuery(Method method, String url, List<NameValuePair> nameValuePairs) {
+    ApiQuery(Method method, String url, List<NameValuePair> params) {
         this.method = method;
         this.url = url == null ? "" : url;
-        this.nameValuePairs = nameValuePairs == null ? new ArrayList<NameValuePair>() : nameValuePairs;
+        this.params = params == null ? new ArrayList<NameValuePair>() : params;
     }
 
     enum Method {
@@ -36,16 +36,12 @@ class ApiQuery {
         return url;
     }
 
-    List<NameValuePair> getNameValuePairs() {
-        return new ArrayList<NameValuePair>(nameValuePairs);
-    }
-
     String createRequestUrl() {
         StringBuilder requestUrl = new StringBuilder(url);
 
-        for (ListIterator<NameValuePair> li = nameValuePairs.listIterator(); li.hasNext(); ) {
+        for (ListIterator<NameValuePair> li = params.listIterator(); li.hasNext(); ) {
             NameValuePair nvp = li.next();
-            requestUrl.append(li.previousIndex() == 0 ? "?" : "").append(nvp.getName()).append("=").append(nvp.getValue()).append(li.nextIndex() == nameValuePairs.size() ? "" : "&");
+            requestUrl.append(li.previousIndex() == 0 ? "?" : "").append(nvp.getName()).append("=").append(nvp.getValue()).append(li.nextIndex() == params.size() ? "" : "&");
         }
         return requestUrl.toString();
     }

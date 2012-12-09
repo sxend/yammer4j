@@ -6,5 +6,8 @@ package yammer4j;
  * Time: 10:12
  */
 public interface Success {
+    boolean equals(Object object);
+    int hashCode();
+    String toString();
 
 }

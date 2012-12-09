@@ -16,7 +16,7 @@ class OAuthImpersonationImpl implements OAuthImpersonation {
         this.yammerHttpClient = yammerHttpClient;
     }
 
-    public Response<AccessToken, Error> getToken(String userId, String consumerKey) throws YammerException {
+    public Response<AccessToken> getToken(String userId, String consumerKey)  {
         List<NameValuePair>  nameValuePairList = generate(userId,consumerKey);
         ApiQuery query = new ApiQuery(ApiQuery.Method.GET, OAuthImpersonation.OAUTH_TOKENS,nameValuePairList);
        YammerHttpResponse response =  yammerHttpClient.execute(query);
@@ -30,7 +30,7 @@ class OAuthImpersonationImpl implements OAuthImpersonation {
         });
     }
 
-    public Response<AccessToken, Error> getPreAuthorizedToken(String userId, String consumerKey) throws YammerException {
+    public Response<AccessToken> getPreAuthorizedToken(String userId, String consumerKey)  {
         List<NameValuePair>  nameValuePairList = generate(userId,consumerKey);
         ApiQuery query = new ApiQuery(ApiQuery.Method.POST, OAuthImpersonation.OAUTH,nameValuePairList);
         YammerHttpResponse response =  yammerHttpClient.execute(query);

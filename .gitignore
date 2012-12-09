@@ -1,9 +1,0 @@
-*.project
-*.classpath
-*.settings
-*.settings/*
-*target/*
-*src/test/resources/hidden.properties
-*.idea
-*stc/test/*
-*.iml*

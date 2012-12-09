@@ -1,9 +1,6 @@
 package yammer4j;
 
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -18,15 +15,19 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.CharArrayBuffer;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.zip.GZIPInputStream;
 
 
 class YammerHttpClient {
     private static final String USER_AGENT;
     private final HttpClient httpClient;
     private AccessToken accessToken = null;
-//    private ResponseType responseType = ResponseType.JSON;
 
     static {
         USER_AGENT = "Yammer4j/HttpClient0.0.1";
@@ -38,15 +39,15 @@ class YammerHttpClient {
         schemeRegistry.register(new Scheme("https", 443, SSLSocketFactory.getSocketFactory()));
         DefaultHttpClient defaultHttpClient = new DefaultHttpClient(new ThreadSafeClientConnManager(schemeRegistry));
         HttpParams params = defaultHttpClient.getParams();
-        HttpConnectionParams.setSoTimeout(params, 3000);
-        HttpConnectionParams.setConnectionTimeout(params, 3000);
+        HttpConnectionParams.setSoTimeout(params, 5000);
+        HttpConnectionParams.setConnectionTimeout(params, 5000);
         HttpConnectionParams.setTcpNoDelay(params, true);
         HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
         HttpProtocolParams.setHttpElementCharset(params, HTTP.UTF_8);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpClientParams.setRedirecting(params, false);
 
-        httpClient = (HttpClient) defaultHttpClient;
+        httpClient = defaultHttpClient;
 
     }
 
@@ -63,21 +64,48 @@ class YammerHttpClient {
     }
 
 
-    YammerHttpResponse execute(ApiQuery query) throws YammerException {
+    YammerHttpResponse execute(ApiQuery query) {
         HttpUriRequest request = generateRequest(query);
         setHeader(request);
 
-        HttpResponse response = null;
         try {
-            response = this.httpClient.execute(request);
+            HttpResponse httpResponse = this.httpClient.execute(request);
+            return new YammerHttpResponse(httpResponse.getStatusLine().getStatusCode(),readEntityAsString(httpResponse.getEntity()));
         } catch (IOException e) {
-            throw new YammerException(e);
+            return new YammerHttpResponse(e);
         }
-        return createYammerApiResponse(response);
     }
 
-    private YammerHttpResponse createYammerApiResponse(HttpResponse response) throws YammerException {
-           return new YammerHttpResponse(response);
+    private String readEntityAsString(HttpEntity entity) throws IOException {
+        if (entity == null) {
+            throw new IOException("HTTP entity may not be null");
+        }
+        InputStream instream = entity.getContent();
+        if (instream == null) {
+            return null;
+        }
+        try {
+            if (entity.getContentLength() > Integer.MAX_VALUE) {
+                throw new IOException("HTTP entity too large");
+            }
+            int i = (int) entity.getContentLength();
+            if (i < 0) {
+                i = 4096;
+            }
+            if (entity.getContentEncoding() != null && entity.getContentEncoding().getValue().equals("gzip")) {
+                instream = new GZIPInputStream(instream);
+            }
+            Reader reader = new InputStreamReader(instream, HTTP.UTF_8);
+            CharArrayBuffer buffer = new CharArrayBuffer(i);
+            char[] tmp = new char[1024];
+            int l;
+            while ((l = reader.read(tmp)) != -1) {
+                buffer.append(tmp, 0, l);
+            }
+            return buffer.toString();
+        } finally {
+            instream.close();
+        }
     }
 
     private void setHeader(HttpUriRequest request) {
@@ -93,6 +121,5 @@ class YammerHttpClient {
     private HttpUriRequest generateRequest(ApiQuery query) {
         return new HttpGet(query.createRequestUrl());
     }
-
 
 }

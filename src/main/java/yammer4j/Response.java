@@ -5,7 +5,7 @@ package yammer4j;
  * Date: 12/12/06
  * Time: 21:35
  */
-public interface Response<Success,Error> {
+public interface Response<Success> {
     public int getStatusCode();
     public boolean isSuccess();
     public Success getSuccess();
