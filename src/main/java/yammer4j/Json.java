@@ -7,7 +7,7 @@ public final class Json implements Success {
 
     private final String json;
 
-    public String getjson() {
+    public String getJson() {
         return this.json;
     }
 
