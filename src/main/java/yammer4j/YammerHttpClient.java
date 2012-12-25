@@ -24,7 +24,7 @@ import java.io.Reader;
 import java.util.zip.GZIPInputStream;
 
 
-class YammerHttpClient {
+final class YammerHttpClient {
     private static final String USER_AGENT;
     private final HttpClient httpClient;
     private AccessToken accessToken = null;
@@ -46,9 +46,7 @@ class YammerHttpClient {
         HttpProtocolParams.setHttpElementCharset(params, HTTP.UTF_8);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpClientParams.setRedirecting(params, false);
-
         httpClient = defaultHttpClient;
-
     }
 
     static YammerHttpClient getInstance() {

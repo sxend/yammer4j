@@ -1,7 +1,10 @@
 package yammer4j;
 
 
+
+
 public final class Yammer {
+
     private Yammer() {
     }
 

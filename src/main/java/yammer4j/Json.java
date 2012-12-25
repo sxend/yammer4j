@@ -26,4 +26,17 @@ public final class Json implements Success {
     public String toString() {
         return this.json;
     }
+    static JsonResponseFactory getJsonResponseFactory(YammerHttpResponse response){
+        return new JsonResponseFactory(response);
+    }
+    static final class JsonResponseFactory extends ResponseFactory<Json> {
+
+        JsonResponseFactory( YammerHttpResponse response){
+            super(response);
+        }
+        @Override
+        Json onSuccess() {
+            return new Json(this.response.getEntityString());
+        }
+    }
 }
